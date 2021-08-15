@@ -73,6 +73,8 @@ public class LoginActivity extends AppCompatActivity {
                                     .build();
                             Response response = client.newCall(request).execute();
                             if (response.code() == 200){
+                                Consts.setToken(response.body().string());
+                                Log.d("code", Consts.getToken());
                                 password_correct = true;
                             }
                         }catch (Exception e){
