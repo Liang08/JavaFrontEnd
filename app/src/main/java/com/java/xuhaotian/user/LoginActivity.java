@@ -35,7 +35,6 @@ public class LoginActivity extends AppCompatActivity {
     private EditText etUser, etPassword;
     private Button mBtnLogin;
     private boolean password_correct = false;
-    String url = "127.0.0.1:8080/login";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
