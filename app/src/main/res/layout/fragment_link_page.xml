@@ -2,15 +2,41 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center"
     android:orientation="vertical">
     <TextView
-        android:id="@+id/tv_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Link Page"
+        android:text="知识点查询"
         android:textSize="30sp"
-        android:textColor="@color/black"
-        android:gravity="center"/>
+        android:layout_margin="10dp"
+        android:gravity="center"
+        android:textColor="@color/black"/>
+    <EditText
+        android:id="@+id/et_link"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:background="@drawable/bg_username"
+        android:layout_margin="20dp"
+        android:hint="请输入待查询文本"
+        android:gravity="top"
+        android:padding="5dp"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center">
+        <android.widget.Button
+            android:id="@+id/btn_search"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_btn_login"
+            android:textColor="@color/white"
+            android:text="查询"
+            android:textSize="20sp"/>
+    </LinearLayout>
+    <ListView
+        android:id="@+id/iv_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"/>
 
 </LinearLayout>
