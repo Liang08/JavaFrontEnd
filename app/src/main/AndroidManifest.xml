@@ -12,15 +12,19 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MyApplication"
         android:usesCleartextTraffic="true">
+        <activity
+            android:name=".user.ModifyPasswordActivity"
+            android:exported="true" />
         <activity android:name=".mainpage.MainPageActivity">
+
+        </activity>
+        <activity android:name=".user.LoginActivity" />
+        <activity android:name=".StartActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-        <activity android:name=".user.LoginActivity" />
-        <activity android:name=".StartActivity">
         </activity>
     </application>
 

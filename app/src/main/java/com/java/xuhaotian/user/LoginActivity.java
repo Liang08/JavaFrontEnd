@@ -2,6 +2,7 @@ package com.java.xuhaotian.user;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -11,6 +12,7 @@ import android.widget.Toast;
 
 import com.java.xuhaotian.Consts;
 import com.java.xuhaotian.R;
+import com.java.xuhaotian.mainpage.MainPageActivity;
 
 import org.json.JSONObject;
 
@@ -73,6 +75,7 @@ public class LoginActivity extends AppCompatActivity {
                             Response response = client.newCall(request).execute();
                             if (response.code() == 200){
                                 Consts.setToken(response.body().string());
+                                Consts.setUserName(username);;
                                 Log.d("code", Consts.getToken());
                                 password_correct = true;
                             }
@@ -90,6 +93,8 @@ public class LoginActivity extends AppCompatActivity {
 
                 if (password_correct){
                     Toast.makeText(LoginActivity.this, "登录成功", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(LoginActivity.this, MainPageActivity.class);
+                    startActivity(intent);
                 }else{
                     Toast.makeText(LoginActivity.this, "密码错误", Toast.LENGTH_SHORT).show();
                 }
