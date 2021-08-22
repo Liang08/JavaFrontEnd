@@ -13,11 +13,15 @@
         android:theme="@style/Theme.MyApplication"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".user.FavouriteActivity"
+            android:exported="true" />
+        <activity
+            android:name=".user.HistoryActivity"
+            android:exported="true" />
+        <activity
             android:name=".user.ModifyPasswordActivity"
             android:exported="true" />
-        <activity android:name=".mainpage.MainPageActivity">
-
-        </activity>
+        <activity android:name=".mainpage.MainPageActivity" />
         <activity android:name=".user.LoginActivity" />
         <activity android:name=".StartActivity">
             <intent-filter>
