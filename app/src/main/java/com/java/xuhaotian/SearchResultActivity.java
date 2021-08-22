@@ -31,7 +31,7 @@ public class SearchResultActivity extends AppCompatActivity {
         mLvResult = findViewById(R.id.lv_result);
         mIbReturn = findViewById(R.id.ib_return);
         mTvTitle = findViewById(R.id.tv_title);
-        mTvTitle.setText("搜索\'" + keyword + "\'结果");
+        mTvTitle.setText("在 " + Consts.getSubjectNow() + " 中搜索 \'" + keyword + "\' 结果");
 
     }
 

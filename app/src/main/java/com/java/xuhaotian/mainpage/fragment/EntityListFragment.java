@@ -11,14 +11,19 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.java.xuhaotian.Consts;
 import com.java.xuhaotian.R;
 import com.java.xuhaotian.SearchActivity;
 import com.java.xuhaotian.adapter.EntityListAdapter;
+import com.java.xuhaotian.adapter.SubjectListAdapter;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,6 +33,7 @@ public class EntityListFragment extends Fragment {
     private String[] mTitles;
     private TextView mTvSearch;
     private ListView mLvEntity;
+    private RecyclerView mRvSubject;
     private String subject;
 
     @Nullable
@@ -43,6 +49,7 @@ public class EntityListFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         mTvSearch = view.findViewById(R.id.tv_search);
         mLvEntity = view.findViewById(R.id.lv_entity);
+        mRvSubject = view.findViewById(R.id.rv_subject);
         setData();
     }
 
@@ -64,6 +71,19 @@ public class EntityListFragment extends Fragment {
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), SearchActivity.class);
                 startActivityForResult(intent, 0);
+            }
+        });
+
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
+        linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
+        mRvSubject.setLayoutManager(linearLayoutManager);
+        SubjectListAdapter subjectListAdapter = new SubjectListAdapter(getActivity(), Consts.getSubjectList());
+        mRvSubject.setAdapter(subjectListAdapter);
+        subjectListAdapter.setOnItemClickListener(new SubjectListAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                Consts.setSubjectNow(Consts.getSubjectList().get(position));
+                setData();
             }
         });
     }

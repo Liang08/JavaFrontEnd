@@ -8,6 +8,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.java.xuhaotian.Consts;
 import com.java.xuhaotian.R;
 
 import java.util.ArrayList;
@@ -55,7 +56,37 @@ public class EntityListAdapter extends BaseAdapter {
         }else{
             component = (Component) convertView.getTag();
         }
-        component.ivImage.setImageResource(R.drawable.chemistry);
+        switch (Consts.getSubjectNow()){
+            case "语文":
+                component.ivImage.setImageResource(R.drawable.chinese);
+                break;
+            case "数学":
+                component.ivImage.setImageResource(R.drawable.math);
+                break;
+            case "英语":
+                component.ivImage.setImageResource(R.drawable.english);
+                break;
+            case "生物":
+                component.ivImage.setImageResource(R.drawable.biology);
+                break;
+            case "物理":
+                component.ivImage.setImageResource(R.drawable.physics);
+                break;
+            case "化学":
+                component.ivImage.setImageResource(R.drawable.chemistry);
+                break;
+            case "政治":
+                component.ivImage.setImageResource(R.drawable.politics);
+                break;
+            case "历史":
+                component.ivImage.setImageResource(R.drawable.history);
+                break;
+            case "地理":
+                component.ivImage.setImageResource(R.drawable.geography);
+                break;
+            default:
+                break;
+        }
         component.tvTitle.setText(mList.get(position));
         return convertView;
     }

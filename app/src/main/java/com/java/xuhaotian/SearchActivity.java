@@ -69,5 +69,8 @@ public class SearchActivity extends AppCompatActivity {
                 return false;
             }
         });
+        mEtSearch.setFocusable(true);
+        mEtSearch.setFocusableInTouchMode(true);
+        mEtSearch.requestFocus();
     }
 }
