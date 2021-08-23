@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -19,6 +20,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.java.xuhaotian.ChannelSelectActivity;
 import com.java.xuhaotian.Consts;
 import com.java.xuhaotian.R;
 import com.java.xuhaotian.SearchActivity;
@@ -34,6 +36,7 @@ public class EntityListFragment extends Fragment {
     private TextView mTvSearch;
     private ListView mLvEntity;
     private RecyclerView mRvSubject;
+    private Button mBtnSetting;
     private String subject;
 
     @Nullable
@@ -50,6 +53,7 @@ public class EntityListFragment extends Fragment {
         mTvSearch = view.findViewById(R.id.tv_search);
         mLvEntity = view.findViewById(R.id.lv_entity);
         mRvSubject = view.findViewById(R.id.rv_subject);
+        mBtnSetting = view.findViewById(R.id.btn_set);
         setData();
     }
 
@@ -60,20 +64,6 @@ public class EntityListFragment extends Fragment {
         Collections.addAll(stringList, mTitles);
         Collections.addAll(stringList, mTitles);
         setListView(stringList);
-    }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
-        mTvSearch.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), SearchActivity.class);
-                startActivityForResult(intent, 0);
-            }
-        });
-
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
         mRvSubject.setLayoutManager(linearLayoutManager);
@@ -88,7 +78,40 @@ public class EntityListFragment extends Fragment {
         });
     }
 
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        mTvSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), SearchActivity.class);
+                startActivityForResult(intent, 0);
+            }
+        });
+
+        mBtnSetting.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), ChannelSelectActivity.class);
+                startActivityForResult(intent, 1);
+            }
+        });
+
+
+    }
+
     public void setListView(ArrayList<String> stringArrayList){
         mLvEntity.setAdapter(new EntityListAdapter(getActivity(), stringArrayList));
+    }
+
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1){
+            Consts.setSubjectNow(Consts.getSubjectList().get(0));
+            setData();
+        }
     }
 }
