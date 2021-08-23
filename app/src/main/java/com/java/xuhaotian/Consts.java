@@ -11,6 +11,7 @@ public class Consts {
     public static final MediaType JSON = MediaType.get("application/json; charset=utf-8");
     private static String token;
     private static ArrayList<String> subject = new ArrayList<>(Arrays.asList("语文", "数学", "英语", "物理", "化学", "生物"));
+    private static ArrayList<String> total = new ArrayList<>(Arrays.asList("语文", "数学", "英语", "物理", "化学", "生物", "政治", "地理", "历史"));
     private static String subjectNow = "语文";
 
 
@@ -36,5 +37,9 @@ public class Consts {
 
     public static void setSubjectNow(String subjectNow) {
         Consts.subjectNow = subjectNow;
+    }
+
+    public static ArrayList<String> getTotal(){
+        return total;
     }
 }
