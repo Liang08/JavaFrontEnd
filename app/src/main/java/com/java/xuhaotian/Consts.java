@@ -12,7 +12,7 @@ public class Consts {
     private static String token;
     private static ArrayList<String> subject = new ArrayList<>(Arrays.asList("语文", "数学", "英语", "物理", "化学", "生物"));
     private static ArrayList<String> total = new ArrayList<>(Arrays.asList("语文", "数学", "英语", "物理", "化学", "生物", "政治", "地理", "历史"));
-    private static String subjectNow = "语文";
+    private static String subjectNow = subject.get(0);
 
 
     public static String getToken() {

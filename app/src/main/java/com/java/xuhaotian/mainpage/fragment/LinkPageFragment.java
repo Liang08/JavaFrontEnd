@@ -1,11 +1,13 @@
 package com.java.xuhaotian.mainpage.fragment;
 
 import android.os.Bundle;
+import android.text.method.Touch;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -26,6 +28,7 @@ import static com.java.xuhaotian.Consts.JSON;
 
 public class LinkPageFragment extends Fragment {
     private TextView mTvTitle;
+    private EditText mEtLink;
     private Button mBtnSearch;
 
     @Nullable
@@ -41,6 +44,7 @@ public class LinkPageFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         mTvTitle = view.findViewById(R.id.tv_title);
         mBtnSearch = view.findViewById(R.id.btn_search);
+        mEtLink = view.findViewById(R.id.et_link);
     }
 
     @Override
@@ -50,7 +54,7 @@ public class LinkPageFragment extends Fragment {
         mBtnSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String context = mTvTitle.getText().toString();
+                String context = mEtLink.getText().toString();
                 Thread thread = new Thread(new Runnable() {
                     @Override
                     public void run() {
@@ -66,7 +70,9 @@ public class LinkPageFragment extends Fragment {
                                     .build();
                             Response response = client.newCall(request).execute();
                             if (response.code() == 200){
-
+                                Log.d("test", "--sending success---");
+                            }else{
+                                Log.d("test", "--sending fail:" + response.code() + "---");
                             }
                         }catch (Exception e){
                             e.printStackTrace();
