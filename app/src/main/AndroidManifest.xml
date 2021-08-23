@@ -12,6 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MyApplication"
         android:usesCleartextTraffic="true">
+
         <activity
             android:name=".user.FavouriteActivity"
             android:exported="true" />
@@ -23,6 +24,10 @@
             android:exported="true" />
         <activity android:name=".mainpage.MainPageActivity" />
         <activity android:name=".user.LoginActivity" />
+
+        <activity android:name=".SearchResultActivity"></activity>
+        <activity android:name=".SearchActivity" />
+
         <activity android:name=".StartActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -30,6 +35,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
     </application>
 
 </manifest>

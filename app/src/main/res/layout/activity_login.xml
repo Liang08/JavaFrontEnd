@@ -69,14 +69,15 @@
                     android:paddingEnd="10dp"
                     android:maxLines="1"
                     android:layout_marginTop="10dp"/>
-                <Button
+                <android.widget.Button
                     android:id="@+id/btn_login"
                     android:layout_width="60dp"
                     android:layout_height="46dp"
                     android:layout_gravity="center_horizontal"
                     android:layout_marginTop="20dp"
                     android:text="go"
-                    android:background="@drawable/bg_btn_login"/>
+                    android:background="@drawable/bg_btn_login"
+                    android:textColor="@color/white"/>
             </LinearLayout>
         </LinearLayout>
 
