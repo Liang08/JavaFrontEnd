@@ -24,6 +24,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLDecoder;
+import java.util.Objects;
 
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -53,49 +54,45 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void initEvent(){
-        mBtnLogin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String username = etUser.getText().toString();
-                String password = etPassword.getText().toString();
-                Thread thread = new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        password_correct = false;
-                        try {
-                            JSONObject json = new JSONObject();
-                            json.put("userName", username);
-                            json.put("password", password);
-                            OkHttpClient client = new OkHttpClient();
-                            RequestBody body = RequestBody.create(String.valueOf(json), JSON);
-                            Request request = new Request.Builder()
-                                    .url(Consts.backendURL + "login")
-                                    .post(body)
-                                    .build();
-                            Response response = client.newCall(request).execute();
-                            if (response.code() == 200){
-                                Consts.setToken(response.body().string());
-                                Log.d("code", Consts.getToken());
-                                password_correct = true;
-                            }
-                        }catch (Exception e){
-                            e.printStackTrace();
-                        }
-                    }
-                });
-                thread.start();
+        mBtnLogin.setOnClickListener(v -> {
+            String username = etUser.getText().toString();
+            String password = etPassword.getText().toString();
+            Thread thread = new Thread(() -> {
+                password_correct = false;
                 try {
-                    thread.join();
-                }catch (InterruptedException e) {
+                    JSONObject json = new JSONObject();
+                    json.put("userName", username);
+                    json.put("password", password);
+                    OkHttpClient client = new OkHttpClient();
+                    RequestBody body = RequestBody.create(String.valueOf(json), JSON);
+                    Request request = new Request.Builder()
+                            .url(Consts.backendURL + "login")
+                            .post(body)
+                            .build();
+                    Response response = client.newCall(request).execute();
+                    if (response.code() == 200){
+                        Consts.setToken(Objects.requireNonNull(response.body()).string());
+                        Consts.setUserName(username);
+                        Log.d("code", Consts.getToken());
+                        password_correct = true;
+                    }
+                }catch (Exception e){
                     e.printStackTrace();
                 }
+            });
+            thread.start();
+            try {
+                thread.join();
+            }catch (InterruptedException e) {
+                e.printStackTrace();
+            }
 
-                if (password_correct){
-                    Intent intent = new Intent(LoginActivity.this, MainPageActivity.class);
-                    startActivity(intent);
-                }else{
-                    Toast.makeText(LoginActivity.this, "密码错误", Toast.LENGTH_SHORT).show();
-                }
+            if (password_correct){
+                Toast.makeText(LoginActivity.this, "登录成功", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(LoginActivity.this, MainPageActivity.class);
+                startActivity(intent);
+            }else{
+                Toast.makeText(LoginActivity.this, "密码错误", Toast.LENGTH_SHORT).show();
             }
         });
     }
