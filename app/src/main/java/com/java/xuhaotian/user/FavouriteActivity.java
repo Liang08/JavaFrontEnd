@@ -1,38 +1,30 @@
 package com.java.xuhaotian.user;
 
-import static com.java.xuhaotian.Consts.JSON;
-
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
-import android.util.Log;
+import android.util.Pair;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.HeaderViewListAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.java.xuhaotian.Consts;
+import com.java.xuhaotian.HttpRequest;
 import com.java.xuhaotian.R;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
 
 public class FavouriteActivity extends AppCompatActivity {
     private Button mBtnReturn;
-    private ListView mLvList;
-    private String error_message = null;
-    List<String> favourite = new ArrayList<>();
+    private final List<Pair<String, String>> favourite = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,51 +36,80 @@ public class FavouriteActivity extends AppCompatActivity {
 
     public void initViews() {
         mBtnReturn = findViewById(R.id.btn_favourite_return);
-        mLvList = findViewById(R.id.lv_favourite_list);
+        ListView mLvList = findViewById(R.id.lv_favourite_list);
 
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                error_message = null;
-                favourite.clear();
-                try {
-                    OkHttpClient client = new OkHttpClient();
-                    Request request = new Request.Builder()
-                            .url(Consts.backendURL + "getFavourite?token=" + Consts.getToken())
-                            .get()
-                            .build();
-                    Response response = client.newCall(request).execute();
-                    if (response.code() == 200) {
-                        JSONArray jsonArray = new JSONArray(response.body().string());
-                        for (int i = 0; i < jsonArray.length(); i++)
-                            favourite.add(jsonArray.getString(i));
-                    }
-                    else if (response.code() == 401) {
-                        JSONObject obj = new JSONObject(response.body().string());
-                        error_message = obj.getString("message") + "";
-                    }
-                    else {
-                        error_message = "请求失败(" + response.code() + ")";
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-        thread.start();
+        String error_message;
+        favourite.clear();
+
         try {
-            thread.join();
-        } catch (InterruptedException e) {
+            HashMap<String, Object> params = new HashMap<>();
+            params.put("token", Consts.getToken());
+            HttpRequest.MyResponse response = new HttpRequest().getRequest(Consts.backendURL + "getFavourite", params);
+            if (response.code() == 200) {
+                JSONArray jsonArray = new JSONArray(response.string());
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject obj = jsonArray.getJSONObject(i);
+                    String course = obj.keys().next();
+                    String name = obj.getString(course);
+                    favourite.add(Pair.create(course, name));
+                }
+                error_message = null;
+            }
+            else if (response.code() == 401) {
+                JSONObject obj = new JSONObject(response.string());
+                error_message = obj.getString("message") + "";
+            }
+            else {
+                error_message = "请求失败(" + response.code() + ")";
+            }
+        } catch (Exception e) {
+            error_message = "请求异常";
             e.printStackTrace();
         }
 
+
         if (error_message == null) {
+            View footView = LayoutInflater.from(this).inflate(R.layout.favourite_list_null_item, null, false);
+            mLvList.addFooterView(footView);
             if (favourite.size() == 0) {
-                favourite.add("收藏夹空空如也");
+                footView.setVisibility(View.VISIBLE);
             }
-            ArrayAdapter<String> adapter = new ArrayAdapter<String>
-                    (this,android.R.layout.simple_expandable_list_item_1, favourite);
-            mLvList.setAdapter(adapter);
+            else {
+                footView.setVisibility(View.INVISIBLE);
+            }
+            FavouriteAdapter mAdapter = new FavouriteAdapter(favourite, FavouriteActivity.this);
+            mAdapter.setDetailListener(
+                    v -> Toast.makeText(FavouriteActivity.this, "查看细节：Pos=" + v.getTag(), Toast.LENGTH_SHORT).show());
+            mAdapter.setRemoveListenerListener(
+                    v -> {
+                        int position = Integer.parseInt(v.getTag().toString());
+                        Pair<String, String> target = favourite.get(position);
+
+                        JSONObject params = new JSONObject();
+                        try {
+                            params.put("course", target.first);
+                            params.put("name", target.second);
+                            params.put("token", Consts.getToken());
+                        } catch (JSONException e) {
+                            throw new RuntimeException(e);
+                        }
+
+                        HttpRequest.MyResponse response = new HttpRequest().putRequest(Consts.backendURL + "resetFavourite", params);
+                        if (response.code() == 200) {
+                            favourite.remove(position);
+                            if (favourite.size() == 0) {
+                                footView.setVisibility(View.VISIBLE);
+                            }
+                            else {
+                                footView.setVisibility(View.INVISIBLE);
+                            }
+                            mAdapter.notifyDataSetChanged();
+                        }
+                        else {
+                            Toast.makeText(FavouriteActivity.this, "取消收藏失败", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+            mLvList.setAdapter(mAdapter);
         }
         else {
             Toast.makeText(FavouriteActivity.this, "收藏夹获取失败：" + error_message, Toast.LENGTH_SHORT).show();
@@ -97,11 +118,6 @@ public class FavouriteActivity extends AppCompatActivity {
     }
 
     public void initEvents() {
-        mBtnReturn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        mBtnReturn.setOnClickListener(v -> finish());
     }
 }
