@@ -7,7 +7,7 @@ import java.util.List;
 import okhttp3.MediaType;
 
 public class Consts {
-    public static final String backendURL = "http://183.172.49.18:8080/";
+    public static final String backendURL = "http://183.173.116.43:8080/";
     public static final MediaType JSON = MediaType.get("application/json; charset=utf-8");
     private static String token;
     private static ArrayList<String> subject = new ArrayList<>(Arrays.asList("语文", "数学", "英语", "物理", "化学", "生物"));
