@@ -27,7 +27,7 @@ public class ModifyPasswordActivity extends AppCompatActivity {
         initEvent();
     }
 
-    public void initViews() {
+    private void initViews() {
         etOldPassword = findViewById(R.id.et_modify_password_old_password);
         etNewPassword = findViewById(R.id.et_modify_password_new_password);
         etNewPasswordAgain = findViewById(R.id.et_modify_password_new_password_again);
@@ -35,7 +35,7 @@ public class ModifyPasswordActivity extends AppCompatActivity {
         mBtnCancel = findViewById(R.id.btn_modify_password_cancel);
     }
 
-    public void initEvent() {
+    private void initEvent() {
         mBtnModify.setOnClickListener(v -> {
             String oldPassword = etOldPassword.getText().toString();
             String newPassword = etNewPassword.getText().toString();

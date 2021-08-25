@@ -1,5 +1,6 @@
 package com.java.xuhaotian.user;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Pair;
 import android.view.LayoutInflater;
@@ -8,9 +9,11 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.java.xuhaotian.Consts;
+import com.java.xuhaotian.EntityDetailActivity;
 import com.java.xuhaotian.HttpRequest;
 import com.java.xuhaotian.R;
 
@@ -25,6 +28,7 @@ import java.util.List;
 public class HistoryActivity extends AppCompatActivity {
     private Button mBtnClear, mBtnReturn;
     private final List<Pair<String, String>> history = new ArrayList<>();
+    private String error_message;
     private HistoryAdapter mAdapter;
     private View footView;
 
@@ -37,13 +41,8 @@ public class HistoryActivity extends AppCompatActivity {
         initEvents();
     }
 
-    public void initViews() {
-        mBtnClear = findViewById(R.id.btn_history_clear);
-        mBtnClear.setEnabled(false);
-        mBtnReturn = findViewById(R.id.btn_history_return);
-        ListView mLvList = findViewById(R.id.lv_history_list);
-        footView = LayoutInflater.from(this).inflate(R.layout.history_list_null_item, null, false);
-        String error_message;
+    private void getHistory() {
+        history.clear();
         try {
             HashMap<String, Object> params = new HashMap<>();
             params.put("token", Consts.getToken());
@@ -69,7 +68,15 @@ public class HistoryActivity extends AppCompatActivity {
             error_message = "请求异常";
             e.printStackTrace();
         }
+    }
 
+    private void initViews() {
+        mBtnClear = findViewById(R.id.btn_history_clear);
+        mBtnClear.setEnabled(false);
+        mBtnReturn = findViewById(R.id.btn_history_return);
+        ListView mLvList = findViewById(R.id.lv_history_list);
+        footView = LayoutInflater.from(this).inflate(R.layout.history_list_null_item, null, false);
+        getHistory();
         if (error_message == null) {
             mLvList.addFooterView(footView);
             if (history.size() == 0) {
@@ -79,18 +86,23 @@ public class HistoryActivity extends AppCompatActivity {
                 footView.setVisibility(View.INVISIBLE);
             }
             mAdapter = new HistoryAdapter(history, HistoryActivity.this);
-            mAdapter.setDetailListener(
-                    v -> Toast.makeText(HistoryActivity.this, "查看细节：Pos=" + v.getTag(), Toast.LENGTH_SHORT).show());
+            mAdapter.setDetailListener(v -> {
+                int position = Integer.parseInt(v.getTag().toString());
+                Intent intent = new Intent(HistoryActivity.this, EntityDetailActivity.class);
+                intent.putExtra("course", history.get(position).first);
+                intent.putExtra("name", history.get(position).second);
+                startActivityForResult(intent, 1);
+            });
+
             mLvList.setAdapter(mAdapter);
             mBtnClear.setEnabled(true);
         }
         else {
             Toast.makeText(HistoryActivity.this, "历史记录获取失败：" + error_message, Toast.LENGTH_SHORT).show();
         }
-
     }
 
-    public void initEvents() {
+    private void initEvents() {
         mBtnClear.setOnClickListener(v -> {
             JSONObject params = new JSONObject();
             try {
@@ -111,5 +123,27 @@ public class HistoryActivity extends AppCompatActivity {
         });
 
         mBtnReturn.setOnClickListener(v -> finish());
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1) {
+            mBtnClear.setEnabled(false);
+            getHistory();
+            if (error_message != null) {
+                Toast.makeText(HistoryActivity.this, "历史记录获取失败：" + error_message, Toast.LENGTH_SHORT).show();
+            }
+            else {
+                mBtnClear.setEnabled(true);
+            }
+            if (history.size() == 0) {
+                footView.setVisibility(View.VISIBLE);
+            }
+            else {
+                footView.setVisibility(View.INVISIBLE);
+            }
+            mAdapter.notifyDataSetChanged();
+        }
     }
 }

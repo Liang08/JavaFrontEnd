@@ -16,7 +16,7 @@ public class HttpRequest {
 
     private String getUrl(Map<String, Object> params) {
         final StringBuffer str = new StringBuffer("?");
-        params.forEach((K, V) -> str.append(K).append("=").append(V.toString()));
+        params.forEach((K, V) -> str.append(K).append("=").append(V.toString()).append("&"));
         return str.toString();
     }
 
