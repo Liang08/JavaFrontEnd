@@ -1,7 +1,10 @@
 package com.java.xuhaotian;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.util.Pair;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -11,6 +14,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.java.xuhaotian.Consts;
@@ -19,10 +23,17 @@ import com.java.xuhaotian.R;
 import com.java.xuhaotian.user.HistoryActivity;
 import com.java.xuhaotian.user.HistoryAdapter;
 
+import org.jetbrains.annotations.Contract;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,6 +42,11 @@ public class EntityDetailActivity extends AppCompatActivity {
     private TextView mTvName, mTvRelation, mTvKnowledge, mTvQuestion;
     private Switch mSwitchFavourite;
     private String course, name;
+    private String error_message;
+    private JSONArray property = new JSONArray();
+    private JSONArray content = new JSONArray();
+    private JSONArray question = new JSONArray();
+    private Boolean isFavourite = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +60,7 @@ public class EntityDetailActivity extends AppCompatActivity {
         initViews();
         initEvents();
     }
+
     private void initViews() {
         mBtnReturn = findViewById(R.id.btn_entity_detail_return);
         mTvName = findViewById(R.id.tv_entity_detail_name);
@@ -54,43 +71,22 @@ public class EntityDetailActivity extends AppCompatActivity {
         mTvRelation = findViewById(R.id.tv_entity_detail_relation);
         mTvQuestion = findViewById(R.id.tv_entity_detail_question);
 
-        String error_message;
-        try {
-            Map<String, Object> params1 = new HashMap<>();
-            params1.put("course", course);
-            params1.put("name", name);
-            params1.put("token", Consts.getToken());
-            HttpRequest.MyResponse response1 = new HttpRequest().getRequest(Consts.backendURL + "getInfoByInstanceName", params1);
-            Map<String, Object> params2 = new HashMap<>();
-            params2.put("uriName", name);
-            params2.put("token", Consts.getToken());
-            HttpRequest.MyResponse response2 = new HttpRequest().getRequest(Consts.backendURL + "getQuestionListByUriName", params2);
-
-            if (response1.code() == 200 && response2.code() == 200) {
-                JSONObject jsonObject = new JSONObject(response1.string());
-                JSONArray jsonArray = new JSONArray(response2.string());
-                mSwitchFavourite.setChecked(jsonObject.getBoolean("isFavourite"));
-                mTvRelation.setText(jsonObject.getJSONArray("content").toString());
-                mTvKnowledge.setText(jsonObject.getJSONArray("property").toString());
-                mTvQuestion.setText(jsonArray.toString());
-                error_message = null;
-            }
-            else {
-                error_message = "请求失败(" + response1.code() + "||" + response2.code() + ")";
-            }
-        } catch (JSONException e) {
-            error_message = "请求异常";
-            e.printStackTrace();
-        }
+        getInfo();
 
         if (error_message == null) {
-
-            mSwitchFavourite.setEnabled(true);
+            mTvKnowledge.setText(property.toString());
+            mTvRelation.setText(content.toString());
+            mTvQuestion.setText(question.toString());
+            if (isFavourite != null) {
+                mSwitchFavourite.setChecked(isFavourite);
+                mSwitchFavourite.setEnabled(true);
+            }
         }
         else {
-            Toast.makeText(EntityDetailActivity.this, "实体详情获取失败：" + error_message, Toast.LENGTH_SHORT).show();
+            Toast.makeText(EntityDetailActivity.this, error_message, Toast.LENGTH_SHORT).show();
         }
     }
+
     private void initEvents() {
         mSwitchFavourite.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (!buttonView.isEnabled()) {
@@ -116,9 +112,117 @@ public class EntityDetailActivity extends AppCompatActivity {
             buttonView.setEnabled(true);
         });
         mBtnReturn.setOnClickListener(v -> {
-            Intent intent = getIntent();
             setResult(RESULT_OK);
             finish();
         });
+    }
+
+    @NonNull
+    @Contract(pure = true)
+    private String getFileName() {
+        return course + "_xht_" + name + ".instance";
+    }
+
+    private void saveInstance() {
+        File file = new File(getCacheDir(), getFileName());
+        ObjectOutputStream oos = null;
+        try {
+            if (!file.exists() && !file.createNewFile()) {
+                return;
+            }
+            oos = new ObjectOutputStream(new FileOutputStream(file));
+            oos.writeObject(property.toString());
+            oos.writeObject(content.toString());
+            oos.writeObject(question.toString());
+            oos.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (oos != null) {
+                try {
+                    oos.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    private boolean readInstance() {
+        File file = new File(getCacheDir(), getFileName());
+        ObjectInputStream ois = null;
+        boolean ok = true;
+        try {
+            ois = new ObjectInputStream(new FileInputStream(file));
+            property = new JSONArray((String)ois.readObject());
+            content = new JSONArray((String)ois.readObject());
+            question = new JSONArray((String)ois.readObject());
+            ois.close();
+        } catch (Throwable e) {
+            e.printStackTrace();
+            ok = false;
+        } finally {
+            if (ois != null) {
+                try {
+                    ois.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return ok;
+    }
+
+    private void getInfo() {
+        property = new JSONArray();
+        content = new JSONArray();
+        question = new JSONArray();
+        isFavourite = null;
+
+        if (readInstance()) {
+            try {
+                Map<String, Object> params = new HashMap<>();
+                params.put("course", course);
+                params.put("name", name);
+                params.put("token", Consts.getToken());
+                HttpRequest.MyResponse response = new HttpRequest().getRequest(Consts.backendURL + "isFavourite", params);
+                if (response.code() == 200) {
+                    isFavourite = Boolean.parseBoolean(response.string());
+                }
+            } catch (Throwable e) {
+                e.printStackTrace();
+            }
+            error_message = null;
+        }
+        else {
+            try {
+                Map<String, Object> params1 = new HashMap<>();
+                params1.put("course", course);
+                params1.put("name", name);
+                params1.put("token", Consts.getToken());
+                HttpRequest.MyResponse response1 = new HttpRequest().getRequest(Consts.backendURL + "getInfoByInstanceName", params1);
+                Map<String, Object> params2 = new HashMap<>();
+                params2.put("uriName", name);
+                params2.put("token", Consts.getToken());
+                HttpRequest.MyResponse response2 = new HttpRequest().getRequest(Consts.backendURL + "getQuestionListByUriName", params2);
+
+                if (response1.code() == 200 && response2.code() == 200) {
+                    JSONObject jsonObject = new JSONObject(response1.string());
+                    property = jsonObject.getJSONArray("property");
+                    content = jsonObject.getJSONArray("content");
+                    question = new JSONArray(response2.string());
+                    isFavourite = jsonObject.getBoolean("isFavourite");
+                    error_message = null;
+                    saveInstance();
+                }
+                else {
+                    error_message = "请求失败(" + response1.code() + "||" + response2.code() + ")";
+                }
+            } catch (JSONException e) {
+                error_message = "请求异常";
+                e.printStackTrace();
+            }
+        }
+
     }
 }
