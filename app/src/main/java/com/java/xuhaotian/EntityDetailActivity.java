@@ -4,18 +4,26 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.text.Html;
 import android.util.Pair;
+import android.util.TypedValue;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 import android.widget.Switch;
+import android.widget.TableLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.java.xuhaotian.Consts;
 import com.java.xuhaotian.HttpRequest;
@@ -27,6 +35,7 @@ import org.jetbrains.annotations.Contract;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -39,7 +48,8 @@ import java.util.Map;
 
 public class EntityDetailActivity extends AppCompatActivity {
     private Button mBtnReturn;
-    private TextView mTvName, mTvRelation, mTvKnowledge, mTvQuestion;
+    private TextView mTvName, mTvRelation, mTvQuestion;
+    private TableLayout mTlProperty;
     private Switch mSwitchFavourite;
     private String course, name;
     private String error_message;
@@ -67,14 +77,36 @@ public class EntityDetailActivity extends AppCompatActivity {
         mTvName.setText(name);
         mSwitchFavourite = findViewById(R.id.switch_entity_detail_favourite);
         mSwitchFavourite.setEnabled(false);
-        mTvKnowledge = findViewById(R.id.tv_entity_detail_knowledge);
+        mTlProperty = findViewById(R.id.tl_entity_detail_property);
         mTvRelation = findViewById(R.id.tv_entity_detail_relation);
         mTvQuestion = findViewById(R.id.tv_entity_detail_question);
 
         getInfo();
 
         if (error_message == null) {
-            mTvKnowledge.setText(property.toString());
+            for (int i = 0; i < property.length(); i++) {
+                try {
+                    JSONObject obj = property.getJSONObject(i);
+                    String predicate = obj.getString("predicateLabel");
+                    String object = obj.getString("object");
+
+                    TableRow.LayoutParams layoutParams = new TableRow.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                    layoutParams.setMargins(5, 6, 5, 6);
+                    TableRow tableRow = new TableRow(this);
+                    TextView tv1 = new TextView(this);
+                    tv1.setText(predicate);
+                    tableRow.addView(tv1, layoutParams);
+                    TextView tv2 = new TextView(this);
+                    tv2.setText(Html.fromHtml(object, Html.FROM_HTML_MODE_COMPACT | Html.FROM_HTML_OPTION_USE_CSS_COLORS));
+                    new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT).setMargins(3, 3, 3, 3);
+                    tableRow.addView(tv2, layoutParams);
+                    mTlProperty.addView(tableRow, new TableLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+            Toast.makeText(EntityDetailActivity.this, Integer.toString(mTlProperty.getChildCount()), Toast.LENGTH_SHORT).show();
+
             mTvRelation.setText(content.toString());
             mTvQuestion.setText(question.toString());
             if (isFavourite != null) {
