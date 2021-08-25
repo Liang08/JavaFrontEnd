@@ -1,5 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/xht13127/AndroidStudioProjects/JavaFrontEnd/app/src/main/res/layout/activity_entity_detail.xml" value="0.264" />
+        <entry key="..\:/xht13127/AndroidStudioProjects/JavaFrontEnd/app/src/main/res/layout/activity_favourite.xml" value="0.3348751156336725" />
+        <entry key="..\:/xht13127/AndroidStudioProjects/JavaFrontEnd/app/src/main/res/layout/activity_history.xml" value="0.22757009345794393" />
+        <entry key="..\:/xht13127/AndroidStudioProjects/JavaFrontEnd/app/src/main/res/layout/activity_login.xml" value="0.17255434782608695" />
+        <entry key="..\:/xht13127/AndroidStudioProjects/JavaFrontEnd/app/src/main/res/layout/activity_main_page.xml" value="0.17255434782608695" />
+        <entry key="..\:/xht13127/AndroidStudioProjects/JavaFrontEnd/app/src/main/res/layout/activity_modify_password.xml" value="0.16394927536231885" />
+        <entry key="..\:/xht13127/AndroidStudioProjects/JavaFrontEnd/app/src/main/res/layout/activity_start.xml" value="0.17255434782608695" />
+        <entry key="..\:/xht13127/AndroidStudioProjects/JavaFrontEnd/app/src/main/res/layout/favourite_list_item.xml" value="0.264" />
+        <entry key="..\:/xht13127/AndroidStudioProjects/JavaFrontEnd/app/src/main/res/layout/favourite_list_null_item.xml" value="0.29856115107913667" />
+        <entry key="..\:/xht13127/AndroidStudioProjects/JavaFrontEnd/app/src/main/res/layout/fragment_ask_answer.xml" value="0.17255434782608695" />
+        <entry key="..\:/xht13127/AndroidStudioProjects/JavaFrontEnd/app/src/main/res/layout/fragment_entity_list.xml" value="0.17255434782608695" />
+        <entry key="..\:/xht13127/AndroidStudioProjects/JavaFrontEnd/app/src/main/res/layout/fragment_link_page.xml" value="0.17255434782608695" />
+        <entry key="..\:/xht13127/AndroidStudioProjects/JavaFrontEnd/app/src/main/res/layout/fragment_review.xml" value="0.17255434782608695" />
+        <entry key="..\:/xht13127/AndroidStudioProjects/JavaFrontEnd/app/src/main/res/layout/fragment_user_page.xml" value="0.264" />
+        <entry key="..\:/xht13127/AndroidStudioProjects/JavaFrontEnd/app/src/main/res/layout/history_list_item.xml" value="0.32562442183163737" />
+        <entry key="..\:/xht13127/AndroidStudioProjects/JavaFrontEnd/app/src/main/res/layout/history_list_null_item.xml" value="0.31637372802960223" />
+        <entry key="..\:/xht13127/AndroidStudioProjects/JavaFrontEnd/app/src/main/res/layout/listview_entity.xml" value="0.2" />
+        <entry key="..\:/xht13127/AndroidStudioProjects/JavaFrontEnd/app/src/main/res/layout/search_bar.xml" value="0.17255434782608695" />
+        <entry key="..\:/xht13127/AndroidStudioProjects/JavaFrontEnd/app/src/main/res/layout/tab_button.xml" value="0.17255434782608695" />
+      </map>
+    </option>
+  </component>
   <component name="NullableNotNullManager">
     <option name="myDefaultNullable" value="androidx.annotation.Nullable" />
     <option name="myDefaultNotNull" value="androidx.annotation.NonNull" />
@@ -25,7 +50,7 @@
     </option>
     <option name="myNotNulls">
       <value>
-        <list size="13">
+        <list size="14">
           <item index="0" class="java.lang.String" itemvalue="org.jetbrains.annotations.NotNull" />
           <item index="1" class="java.lang.String" itemvalue="edu.umd.cs.findbugs.annotations.NonNull" />
           <item index="2" class="java.lang.String" itemvalue="android.support.annotation.NonNull" />
@@ -39,6 +64,7 @@
           <item index="10" class="java.lang.String" itemvalue="org.eclipse.jdt.annotation.NonNull" />
           <item index="11" class="java.lang.String" itemvalue="io.reactivex.annotations.NonNull" />
           <item index="12" class="java.lang.String" itemvalue="io.reactivex.rxjava3.annotations.NonNull" />
+          <item index="13" class="java.lang.String" itemvalue="lombok.NonNull" />
         </list>
       </value>
     </option>
