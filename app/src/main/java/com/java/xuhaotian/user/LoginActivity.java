@@ -35,7 +35,7 @@ import static com.java.xuhaotian.Consts.JSON;
 
 public class LoginActivity extends AppCompatActivity {
     private EditText etUser, etPassword;
-    private Button mBtnLogin;
+    private Button mBtnLogin, mBtnRegister;
     private boolean password_correct = false;
 
     @Override
@@ -50,6 +50,7 @@ public class LoginActivity extends AppCompatActivity {
         etUser = findViewById(R.id.et_username);
         etPassword = findViewById(R.id.et_password);
         mBtnLogin = findViewById(R.id.btn_login);
+        mBtnRegister = findViewById(R.id.btn_register);
     }
 
     public void initEvent(){
@@ -96,6 +97,14 @@ public class LoginActivity extends AppCompatActivity {
                 }else{
                     Toast.makeText(LoginActivity.this, "密码错误", Toast.LENGTH_SHORT).show();
                 }
+            }
+        });
+
+        mBtnRegister.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
+                startActivity(intent);
             }
         });
     }

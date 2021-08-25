@@ -88,7 +88,7 @@
                         android:layout_width="60dp"
                         android:layout_height="46dp"
                         android:layout_gravity="center_horizontal"
-                        android:text="注册"
+                        android:text="go"
                         android:layout_marginStart="40dp"
                         android:background="@drawable/bg_btn_login"
                         android:textColor="@color/white"/>
