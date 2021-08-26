@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,14 +23,19 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.java.xuhaotian.ChannelSelectActivity;
 import com.java.xuhaotian.Consts;
+import com.java.xuhaotian.HttpRequest;
 import com.java.xuhaotian.R;
 import com.java.xuhaotian.SearchActivity;
 import com.java.xuhaotian.adapter.EntityListAdapter;
 import com.java.xuhaotian.adapter.SubjectListAdapter;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 
 public class EntityListFragment extends Fragment {
     private String[] mTitles;
@@ -38,6 +44,7 @@ public class EntityListFragment extends Fragment {
     private RecyclerView mRvSubject;
     private Button mBtnSetting;
     private String subject;
+    private String error_message;
 
     @Nullable
     @Override
@@ -59,10 +66,37 @@ public class EntityListFragment extends Fragment {
 
     private void setData(){
         mTitles = new String[]{"语文", "数学", "英语", "物理", "化学", "生物"};
-        ArrayList<String> stringList = new ArrayList<>(Arrays.asList(mTitles));
-        Collections.addAll(stringList, mTitles);
-        Collections.addAll(stringList, mTitles);
-        Collections.addAll(stringList, mTitles);
+        ArrayList<String> stringList = new ArrayList<>();
+        error_message = null;
+        Log.d("test", "start");
+        try {
+            HashMap<String, Object> params = new HashMap<>();
+            params.put("token", Consts.getToken());
+            params.put("subject", Consts.getSubjectName(Consts.getSubjectNow()));
+            HttpRequest.MyResponse response = new HttpRequest().getRequest(Consts.backendURL + "getHotInstance", params);
+            if (response.code() == 200) {
+                JSONArray jsonArray = new JSONArray(response.string());
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    Object obj = jsonArray.get(i);
+                    stringList.add(String.valueOf(obj));
+                    Log.d("test", String.valueOf(obj));
+                }
+
+            }
+            else if (response.code() == 401) {
+                Log.d("test", "401");
+                JSONObject obj = new JSONObject(response.string());
+                error_message = obj.getString("message") + "";
+            }
+            else {
+                Log.d("test", String.valueOf(response.code()));
+                error_message = "请求失败(" + response.code() + ")";
+            }
+        } catch (Exception e) {
+            Log.d("test", "fail");
+            e.printStackTrace();
+        }
+
         setListView(stringList);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
