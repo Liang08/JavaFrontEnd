@@ -4,11 +4,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.Html;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ExpandableListView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.TableLayout;
@@ -53,6 +53,7 @@ public class EntityDetailActivity extends AppCompatActivity {
     private final List<List<Pair<String, String>>> itemList = new ArrayList<>();
     private int mContentHeight;
     private List<Integer> mContentExpandHeightList;
+    private boolean isWaiting = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,6 +69,8 @@ public class EntityDetailActivity extends AppCompatActivity {
     }
 
     private void initViews() {
+        float dip = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1, getResources().getDisplayMetrics());
+
         mBtnReturn = findViewById(R.id.btn_entity_detail_return);
         TextView mTvName = findViewById(R.id.tv_entity_detail_name);
         mTvName.setText(name);
@@ -86,18 +89,23 @@ public class EntityDetailActivity extends AppCompatActivity {
                     JSONObject obj = property.getJSONObject(i);
                     String predicate = obj.getString("predicateLabel");
                     String object = obj.getString("object");
-
-                    TableRow.LayoutParams layoutParams = new TableRow.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                    layoutParams.setMargins(5, 6, 5, 6);
                     TableRow tableRow = new TableRow(this);
                     TextView tv1 = new TextView(this);
                     tv1.setText(predicate);
-                    tableRow.addView(tv1, layoutParams);
+                    tv1.setTextSize(20);
+                    tv1.setBackgroundColor(getColor(R.color.white));
+                    TableRow.LayoutParams layoutParams1 = new TableRow.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+                    layoutParams1.setMargins((int) (2 * dip), (int) (1 * dip), (int) (1 * dip), (int) (1 * dip));
+                    tableRow.addView(tv1, layoutParams1);
                     TextView tv2 = new TextView(this);
                     tv2.setText(Html.fromHtml(object, Html.FROM_HTML_MODE_LEGACY));
-                    new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT).setMargins(3, 3, 3, 3);
-                    tableRow.addView(tv2, layoutParams);
-                    mTlProperty.addView(tableRow, new TableLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT));
+                    tv2.setTextSize(16);
+                    tv2.setBackgroundColor(getColor(R.color.white));
+                    TableRow.LayoutParams layoutParams2 = new TableRow.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+                    layoutParams2.setMargins((int) (1 * dip), (int) (1 * dip), (int) (2 * dip), (int) (1 * dip));
+                    tableRow.addView(tv2, layoutParams2);
+                    tableRow.setBackgroundColor(getColor(R.color.lightSteelBlue));
+                    mTlProperty.addView(tableRow, new TableLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
                 } catch (JSONException e) {
                     Log.d(TAG, Log.getStackTraceString(e));
                 }
@@ -128,10 +136,15 @@ public class EntityDetailActivity extends AppCompatActivity {
             }
             EntityDetailContentAdapter mContentAdapter = new EntityDetailContentAdapter(groupList, itemList, EntityDetailActivity.this);
             mContentAdapter.setItemListener(v -> {
-                Intent intent = new Intent(EntityDetailActivity.this, EntityDetailActivity.class);
-                intent.putExtra("course", ((Pair<String, String>)v.getTag()).first);
-                intent.putExtra("name", ((Pair<String, String>)v.getTag()).second);
-                startActivityForResult(intent, 1);
+                if (!isWaiting) {
+                    Intent intent = new Intent(EntityDetailActivity.this, EntityDetailActivity.class);
+                    intent.putExtra("course", ((Pair<String, String>)v.getTag()).first);
+                    intent.putExtra("name", ((Pair<String, String>)v.getTag()).second);
+                    isWaiting = true;
+                    mSwitchFavourite.setEnabled(false);
+                    mBtnReturn.setEnabled(false);
+                    startActivityForResult(intent, 1);
+                }
             });
             mExLvContentList.setAdapter(mContentAdapter);
 
@@ -188,6 +201,7 @@ public class EntityDetailActivity extends AppCompatActivity {
                 itemView.measure(0, 0);
                 mQuestionHeight += itemView.getMeasuredHeight();
             }
+            mQuestionHeight += (mQuestionAdapter.getCount() - 1) * mLvQuestionList.getDividerHeight();
             setHeight(mLvQuestionList, mQuestionHeight);
             // init favourite
             if (isFavourite != null) {
@@ -234,12 +248,13 @@ public class EntityDetailActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 1) {
-            mSwitchFavourite.setEnabled(false);
             getIsFavourite();
             if (isFavourite != null) {
                 mSwitchFavourite.setChecked(isFavourite);
                 mSwitchFavourite.setEnabled(true);
             }
+            isWaiting = false;
+            mBtnReturn.setEnabled(true);
         }
     }
 
@@ -350,7 +365,7 @@ public class EntityDetailActivity extends AppCompatActivity {
         }
     }
 
-    private void setHeight(View view, int height) {
+    private void setHeight(@NonNull View view, int height) {
         ViewGroup.LayoutParams params = view.getLayoutParams();
         params.height = height;
         view.setLayoutParams(params);

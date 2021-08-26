@@ -81,7 +81,7 @@ public class EntityDetailContentAdapter extends BaseExpandableListAdapter {
         }
         itemHolder.tv_name.setText(mItem.get(groupPosition).get(childPosition).second);
         itemHolder.tv_name.setTag(mItem.get(groupPosition).get(childPosition));
-        // itemHolder.tv_name.setOnClickListener(mItemListener);
+        itemHolder.tv_name.setOnClickListener(mItemListener);
         return convertView;
     }
 
