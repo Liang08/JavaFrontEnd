@@ -129,13 +129,13 @@ public class EntityDetailActivity extends AppCompatActivity {
             EntityDetailContentAdapter mContentAdapter = new EntityDetailContentAdapter(groupList, itemList, EntityDetailActivity.this);
             mContentAdapter.setItemListener(v -> {
                 Intent intent = new Intent(EntityDetailActivity.this, EntityDetailActivity.class);
-                intent.putExtra("course", v.getTag(0).toString());
-                intent.putExtra("name", v.getTag(1).toString());
+                intent.putExtra("course", ((Pair<String, String>)v.getTag()).first);
+                intent.putExtra("name", ((Pair<String, String>)v.getTag()).second);
                 startActivityForResult(intent, 1);
             });
             mExLvContentList.setAdapter(mContentAdapter);
 
-            mContentHeight = 0;
+            mContentHeight = 10;
             mContentExpandHeightList = new ArrayList<>();
             for (int i = 0; i < mContentAdapter.getGroupCount(); i++) {
                 View groupView = mContentAdapter.getGroupView(i, false, null, mExLvContentList);
@@ -182,7 +182,13 @@ public class EntityDetailActivity extends AppCompatActivity {
             }
             EntityDetailQuestionAdapter mQuestionAdapter = new EntityDetailQuestionAdapter(questionList, EntityDetailActivity.this);
             mLvQuestionList.setAdapter(mQuestionAdapter);
-
+            int mQuestionHeight = 10;
+            for (int i = 0; i < mQuestionAdapter.getCount(); i++) {
+                View itemView = mQuestionAdapter.getView(i, null, mLvQuestionList);
+                itemView.measure(0, 0);
+                mQuestionHeight += itemView.getMeasuredHeight();
+            }
+            setHeight(mLvQuestionList, mQuestionHeight);
             // init favourite
             if (isFavourite != null) {
                 mSwitchFavourite.setChecked(isFavourite);
