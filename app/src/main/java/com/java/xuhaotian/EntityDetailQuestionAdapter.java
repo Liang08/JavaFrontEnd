@@ -100,9 +100,9 @@ public class EntityDetailQuestionAdapter extends BaseAdapter {
     }
 
     static class ViewHolder{
-        TextView tv_body;
-        RadioButton rdoBtn_a, rdoBtn_b, rdoBtn_c, rdoBtn_d;
-        RadioGroup rdoGroup;
+        private TextView tv_body;
+        private RadioButton rdoBtn_a, rdoBtn_b, rdoBtn_c, rdoBtn_d;
+        private RadioGroup rdoGroup;
     }
 
     static String getOption(int id) {

@@ -75,19 +75,21 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="相关实体"
-                android:textSize="20sp" />
+                android:textSize="28sp" />
 
-            <TextView
-                android:id="@+id/tv_entity_detail_relation"
+            <ExpandableListView
+                android:id="@+id/exLv_entity_detail_content_list"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="TextView" />
+                android:footerDividersEnabled="false"
+                android:headerDividersEnabled="false"
+                android:nestedScrollingEnabled="true" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="知识卡片"
-                android:textSize="20sp" />
+                android:textSize="28sp" />
 
             <TableLayout
                 android:id="@+id/tl_entity_detail_property"
@@ -99,7 +101,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="相关习题"
-                android:textSize="20sp" />
+                android:textSize="28sp" />
 
             <ListView
                 android:id="@+id/lv_entity_detail_question_list"

@@ -76,9 +76,9 @@ public class FavouriteAdapter extends BaseAdapter {
     }
 
     static class ViewHolder{
-        ImageView iv_icon;
-        TextView tv_name;
-        Button btn_detail;
-        Button btn_remove;
+        private ImageView iv_icon;
+        private TextView tv_name;
+        private Button btn_detail;
+        private Button btn_remove;
     }
 }

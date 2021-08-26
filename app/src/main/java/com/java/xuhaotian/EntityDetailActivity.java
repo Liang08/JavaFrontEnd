@@ -4,8 +4,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.Html;
 import android.util.Log;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ExpandableListView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Switch;
@@ -17,6 +19,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.util.Pair;
 
 import org.jetbrains.annotations.Contract;
 import org.json.JSONArray;
@@ -46,6 +49,10 @@ public class EntityDetailActivity extends AppCompatActivity {
     private JSONArray question = new JSONArray();
     private Boolean isFavourite = null;
     private final List<Question> questionList = new ArrayList<>();
+    private final List<String> groupList = new ArrayList<>();
+    private final List<List<Pair<String, String>>> itemList = new ArrayList<>();
+    private int mContentHeight;
+    private List<Integer> mContentExpandHeightList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,7 +74,7 @@ public class EntityDetailActivity extends AppCompatActivity {
         mSwitchFavourite = findViewById(R.id.switch_entity_detail_favourite);
         mSwitchFavourite.setEnabled(false);
         TableLayout mTlProperty = findViewById(R.id.tl_entity_detail_property);
-        TextView mTvRelation = findViewById(R.id.tv_entity_detail_relation);
+        ExpandableListView mExLvContentList = findViewById(R.id.exLv_entity_detail_content_list);
         ListView mLvQuestionList = findViewById(R.id.lv_entity_detail_question_list);
 
         getInfo();
@@ -96,7 +103,65 @@ public class EntityDetailActivity extends AppCompatActivity {
                 }
             }
             // init content
-            mTvRelation.setText(content.toString());
+            groupList.clear();
+            itemList.clear();
+            for (int i = 0; i < content.length(); i++) {
+                try {
+                    JSONObject obj = content.getJSONObject(i);
+                    String predicate = obj.getString("predicate_label");
+                    JSONArray jsonArray = obj.getJSONArray("content");
+                    List<Pair<String, String>> list = new ArrayList<>();
+                    for (int j = 0; j < jsonArray.length(); j++) {
+                        JSONObject obj2 = jsonArray.getJSONObject(j);
+                        if (obj2.has("subject_label")) {
+                            list.add(Pair.create(obj2.getString("subject_course"), obj2.getString("subject_label")));
+                        }
+                        else if (obj2.has("object_label")) {
+                            list.add(Pair.create(obj2.getString("object_course"), obj2.getString("object_label")));
+                        }
+                    }
+                    groupList.add(predicate);
+                    itemList.add(list);
+                } catch (JSONException e) {
+                    Log.d(TAG, Log.getStackTraceString(e));
+                }
+            }
+            EntityDetailContentAdapter mContentAdapter = new EntityDetailContentAdapter(groupList, itemList, EntityDetailActivity.this);
+            mContentAdapter.setItemListener(v -> {
+                Intent intent = new Intent(EntityDetailActivity.this, EntityDetailActivity.class);
+                intent.putExtra("course", v.getTag(0).toString());
+                intent.putExtra("name", v.getTag(1).toString());
+                startActivityForResult(intent, 1);
+            });
+            mExLvContentList.setAdapter(mContentAdapter);
+
+            mContentHeight = 0;
+            mContentExpandHeightList = new ArrayList<>();
+            for (int i = 0; i < mContentAdapter.getGroupCount(); i++) {
+                View groupView = mContentAdapter.getGroupView(i, false, null, mExLvContentList);
+                groupView.measure(0, 0);
+                mContentHeight += groupView.getMeasuredHeight();
+                int sum = -groupView.getMeasuredHeight();
+                groupView = mContentAdapter.getGroupView(i, true, null, mExLvContentList);
+                groupView.measure(0, 0);
+                sum += groupView.getMeasuredHeight();
+                for (int j = 0; j < mContentAdapter.getChildrenCount(i); j++) {
+                    View itemView = mContentAdapter.getChildView(i, j, false, null, mExLvContentList);
+                    itemView.measure(0, 0);
+                    sum += itemView.getMeasuredHeight();
+                }
+                mContentExpandHeightList.add(sum);
+            }
+            mContentHeight += (mContentAdapter.getGroupCount() - 1) * mExLvContentList.getDividerHeight();
+            setHeight(mExLvContentList, mContentHeight);
+            mExLvContentList.setOnGroupExpandListener(groupPosition -> {
+                mContentHeight += mContentExpandHeightList.get(groupPosition);
+                setHeight(mExLvContentList, mContentHeight);
+            });
+            mExLvContentList.setOnGroupCollapseListener(groupPosition -> {
+                mContentHeight -= mContentExpandHeightList.get(groupPosition);
+                setHeight(mExLvContentList, mContentHeight);
+            });
             // init question
             questionList.clear();
             for (int i = 0; i < question.length(); i++) {
@@ -115,9 +180,10 @@ public class EntityDetailActivity extends AppCompatActivity {
                     Log.d(TAG, Log.getStackTraceString(e));
                 }
             }
+            EntityDetailQuestionAdapter mQuestionAdapter = new EntityDetailQuestionAdapter(questionList, EntityDetailActivity.this);
+            mLvQuestionList.setAdapter(mQuestionAdapter);
 
-            EntityDetailQuestionAdapter mAdapter = new EntityDetailQuestionAdapter(questionList, EntityDetailActivity.this);
-            mLvQuestionList.setAdapter(mAdapter);
+            // init favourite
             if (isFavourite != null) {
                 mSwitchFavourite.setChecked(isFavourite);
                 mSwitchFavourite.setEnabled(true);
@@ -260,7 +326,6 @@ public class EntityDetailActivity extends AppCompatActivity {
                 error_message = "请求异常";
             }
         }
-
     }
 
     private void getIsFavourite() {
@@ -279,4 +344,9 @@ public class EntityDetailActivity extends AppCompatActivity {
         }
     }
 
+    private void setHeight(View view, int height) {
+        ViewGroup.LayoutParams params = view.getLayoutParams();
+        params.height = height;
+        view.setLayoutParams(params);
+    }
 }

@@ -69,8 +69,8 @@ public class HistoryAdapter extends BaseAdapter {
     }
 
     static class ViewHolder{
-        ImageView iv_icon;
-        TextView tv_name;
-        Button btn_detail;
+        private ImageView iv_icon;
+        private TextView tv_name;
+        private Button btn_detail;
     }
 }
