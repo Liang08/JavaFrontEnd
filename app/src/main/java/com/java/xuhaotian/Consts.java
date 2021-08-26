@@ -7,7 +7,7 @@ import java.util.HashMap;
 import okhttp3.MediaType;
 
 public class Consts {
-    public static final String backendURL = "http://183.173.116.43:8080/";
+    public static final String backendURL = "http://183.172.52.110:8080/";
     public static final MediaType JSON = MediaType.get("application/json; charset=utf-8");
     private static String token;
     private static String userName;
@@ -29,6 +29,31 @@ public class Consts {
         }
     };
 
+    public static String getSubjectName(String subject) {
+        switch (subject) {
+            case "语文":
+                return "chinese";
+            case "数学":
+                return "math";
+            case "英语":
+                return "english";
+            case "物理":
+                return "physics";
+            case "化学":
+                return "chemistry";
+            case "生物":
+                return "biology";
+            case "政治":
+                return "politics";
+            case "地理":
+                return "geo";
+            case "历史":
+                return "history";
+            default:
+                return "";
+        }
+    }
+
     public static String getToken() {
         return token;
     }
@@ -45,11 +70,11 @@ public class Consts {
         Consts.userName = userName;
     }
 
-    public static void setSubjectList(ArrayList<String> subjectList){
+    public static void setSubjectList(ArrayList<String> subjectList) {
         subject = subjectList;
     }
 
-    public static ArrayList<String> getSubjectList(){
+    public static ArrayList<String> getSubjectList() {
         return subject;
     }
 
@@ -61,10 +86,12 @@ public class Consts {
         Consts.subjectNow = subjectNow;
     }
 
-    public static ArrayList<String> getTotal(){
+    public static ArrayList<String> getTotal() {
         return total;
     }
 
-    public static Integer getSubjectIconResId(String subject) { return Consts.subjectIconResId.get(subject); }
+    public static Integer getSubjectIconResId(String subject) {
+        return Consts.subjectIconResId.get(subject);
+    }
 
 }
