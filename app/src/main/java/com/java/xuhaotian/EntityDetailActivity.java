@@ -1,20 +1,13 @@
 package com.java.xuhaotian;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.text.Html;
-import android.util.Pair;
-import android.util.TypedValue;
-import android.view.LayoutInflater;
-import android.view.View;
+import android.util.Log;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.CompoundButton;
-import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.RadioGroup;
+import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -22,20 +15,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
-
-import com.java.xuhaotian.Consts;
-import com.java.xuhaotian.HttpRequest;
-import com.java.xuhaotian.R;
-import com.java.xuhaotian.user.HistoryActivity;
-import com.java.xuhaotian.user.HistoryAdapter;
 
 import org.jetbrains.annotations.Contract;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -43,13 +29,15 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class EntityDetailActivity extends AppCompatActivity {
+    private static final String TAG = "EntityDetailActivity";
+
     private Button mBtnReturn;
-    private TextView mTvName, mTvRelation, mTvQuestion;
-    private TableLayout mTlProperty;
     private Switch mSwitchFavourite;
     private String course, name;
     private String error_message;
@@ -57,6 +45,7 @@ public class EntityDetailActivity extends AppCompatActivity {
     private JSONArray content = new JSONArray();
     private JSONArray question = new JSONArray();
     private Boolean isFavourite = null;
+    private final List<Question> questionList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,17 +62,18 @@ public class EntityDetailActivity extends AppCompatActivity {
 
     private void initViews() {
         mBtnReturn = findViewById(R.id.btn_entity_detail_return);
-        mTvName = findViewById(R.id.tv_entity_detail_name);
+        TextView mTvName = findViewById(R.id.tv_entity_detail_name);
         mTvName.setText(name);
         mSwitchFavourite = findViewById(R.id.switch_entity_detail_favourite);
         mSwitchFavourite.setEnabled(false);
-        mTlProperty = findViewById(R.id.tl_entity_detail_property);
-        mTvRelation = findViewById(R.id.tv_entity_detail_relation);
-        mTvQuestion = findViewById(R.id.tv_entity_detail_question);
+        TableLayout mTlProperty = findViewById(R.id.tl_entity_detail_property);
+        TextView mTvRelation = findViewById(R.id.tv_entity_detail_relation);
+        ListView mLvQuestionList = findViewById(R.id.lv_entity_detail_question_list);
 
         getInfo();
 
         if (error_message == null) {
+            // init property
             for (int i = 0; i < property.length(); i++) {
                 try {
                     JSONObject obj = property.getJSONObject(i);
@@ -97,18 +87,37 @@ public class EntityDetailActivity extends AppCompatActivity {
                     tv1.setText(predicate);
                     tableRow.addView(tv1, layoutParams);
                     TextView tv2 = new TextView(this);
-                    tv2.setText(Html.fromHtml(object, Html.FROM_HTML_MODE_COMPACT | Html.FROM_HTML_OPTION_USE_CSS_COLORS));
+                    tv2.setText(Html.fromHtml(object, Html.FROM_HTML_MODE_LEGACY));
                     new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT).setMargins(3, 3, 3, 3);
                     tableRow.addView(tv2, layoutParams);
                     mTlProperty.addView(tableRow, new TableLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT));
                 } catch (JSONException e) {
-                    e.printStackTrace();
+                    Log.d(TAG, Log.getStackTraceString(e));
                 }
             }
-            Toast.makeText(EntityDetailActivity.this, Integer.toString(mTlProperty.getChildCount()), Toast.LENGTH_SHORT).show();
-
+            // init content
             mTvRelation.setText(content.toString());
-            mTvQuestion.setText(question.toString());
+            // init question
+            questionList.clear();
+            for (int i = 0; i < question.length(); i++) {
+                try {
+                    JSONObject obj = question.getJSONObject(i);
+                    questionList.add(new Question(
+                            obj.getString("qBody"),
+                            obj.getString("qAnswer"),
+                            obj.getString("A"),
+                            obj.getString("B"),
+                            obj.getString("C"),
+                            obj.getString("D"),
+                            obj.getInt("id")
+                    ));
+                } catch (JSONException e) {
+                    Log.d(TAG, Log.getStackTraceString(e));
+                }
+            }
+
+            EntityDetailQuestionAdapter mAdapter = new EntityDetailQuestionAdapter(questionList, EntityDetailActivity.this);
+            mLvQuestionList.setAdapter(mAdapter);
             if (isFavourite != null) {
                 mSwitchFavourite.setChecked(isFavourite);
                 mSwitchFavourite.setEnabled(true);
@@ -149,6 +158,19 @@ public class EntityDetailActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1) {
+            mSwitchFavourite.setEnabled(false);
+            getIsFavourite();
+            if (isFavourite != null) {
+                mSwitchFavourite.setChecked(isFavourite);
+                mSwitchFavourite.setEnabled(true);
+            }
+        }
+    }
+
     @NonNull
     @Contract(pure = true)
     private String getFileName() {
@@ -168,13 +190,13 @@ public class EntityDetailActivity extends AppCompatActivity {
             oos.writeObject(question.toString());
             oos.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.d(TAG, Log.getStackTraceString(e));
         } finally {
             if (oos != null) {
                 try {
                     oos.close();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    Log.d(TAG, Log.getStackTraceString(e));
                 }
             }
         }
@@ -191,14 +213,13 @@ public class EntityDetailActivity extends AppCompatActivity {
             question = new JSONArray((String)ois.readObject());
             ois.close();
         } catch (Throwable e) {
-            e.printStackTrace();
             ok = false;
         } finally {
             if (ois != null) {
                 try {
                     ois.close();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    Log.d(TAG, Log.getStackTraceString(e));
                 }
             }
         }
@@ -206,24 +227,8 @@ public class EntityDetailActivity extends AppCompatActivity {
     }
 
     private void getInfo() {
-        property = new JSONArray();
-        content = new JSONArray();
-        question = new JSONArray();
-        isFavourite = null;
-
         if (readInstance()) {
-            try {
-                Map<String, Object> params = new HashMap<>();
-                params.put("course", course);
-                params.put("name", name);
-                params.put("token", Consts.getToken());
-                HttpRequest.MyResponse response = new HttpRequest().getRequest(Consts.backendURL + "isFavourite", params);
-                if (response.code() == 200) {
-                    isFavourite = Boolean.parseBoolean(response.string());
-                }
-            } catch (Throwable e) {
-                e.printStackTrace();
-            }
+            getIsFavourite();
             error_message = null;
         }
         else {
@@ -251,10 +256,27 @@ public class EntityDetailActivity extends AppCompatActivity {
                     error_message = "请求失败(" + response1.code() + "||" + response2.code() + ")";
                 }
             } catch (JSONException e) {
+                Log.d(TAG, Log.getStackTraceString(e));
                 error_message = "请求异常";
-                e.printStackTrace();
             }
         }
 
     }
+
+    private void getIsFavourite() {
+        isFavourite = null;
+        try {
+            Map<String, Object> params = new HashMap<>();
+            params.put("course", course);
+            params.put("name", name);
+            params.put("token", Consts.getToken());
+            HttpRequest.MyResponse response = new HttpRequest().getRequest(Consts.backendURL + "isFavourite", params);
+            if (response.code() == 200) {
+                isFavourite = Boolean.parseBoolean(response.string());
+            }
+        } catch (Throwable e) {
+            Log.d(TAG, Log.getStackTraceString(e));
+        }
+    }
+
 }

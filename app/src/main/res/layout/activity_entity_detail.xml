@@ -60,11 +60,11 @@
 
     </LinearLayout>
 
-    <ScrollView
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginHorizontal="3dp"
-        android:layout_marginVertical="3dp">
+        android:fillViewport="true">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -74,7 +74,8 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="相关实体" />
+                android:text="相关实体"
+                android:textSize="20sp" />
 
             <TextView
                 android:id="@+id/tv_entity_detail_relation"
@@ -85,26 +86,28 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="知识卡片" />
+                android:text="知识卡片"
+                android:textSize="20sp" />
 
             <TableLayout
                 android:id="@+id/tl_entity_detail_property"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:shrinkColumns="1" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="相关习题" />
+                android:text="相关习题"
+                android:textSize="20sp" />
 
-            <TextView
-                android:id="@+id/tv_entity_detail_question"
+            <ListView
+                android:id="@+id/lv_entity_detail_question_list"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="TextView" />
+                android:nestedScrollingEnabled="true" />
 
         </LinearLayout>
-    </ScrollView>
+    </androidx.core.widget.NestedScrollView>
 
 </LinearLayout>

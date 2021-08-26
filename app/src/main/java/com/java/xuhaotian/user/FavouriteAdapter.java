@@ -53,7 +53,7 @@ public class FavouriteAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder holder;
         if (convertView == null) {
-            convertView = LayoutInflater.from(mContext).inflate(R.layout.favourite_list_item,parent,false);
+            convertView = LayoutInflater.from(mContext).inflate(R.layout.favourite_list_item, parent,false);
             holder = new ViewHolder();
             holder.iv_icon= convertView.findViewById(R.id.iv_favourite_list_item_icon);
             holder.tv_name = convertView.findViewById(R.id.tv_favourite_list_item_name);
