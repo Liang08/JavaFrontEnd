@@ -3,13 +3,18 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="..\:/xht13127/AndroidStudioProjects/JavaFrontEnd/app/src/main/res/layout/activity_entity_detail.xml" value="0.264" />
+        <entry key="..\:/xht13127/AndroidStudioProjects/JavaFrontEnd/app/src/main/res/drawable/bg_btn_login.xml" value="0.11367521367521367" />
+        <entry key="..\:/xht13127/AndroidStudioProjects/JavaFrontEnd/app/src/main/res/layout/activity_entity_detail.xml" value="0.2" />
         <entry key="..\:/xht13127/AndroidStudioProjects/JavaFrontEnd/app/src/main/res/layout/activity_favourite.xml" value="0.3348751156336725" />
         <entry key="..\:/xht13127/AndroidStudioProjects/JavaFrontEnd/app/src/main/res/layout/activity_history.xml" value="0.22757009345794393" />
         <entry key="..\:/xht13127/AndroidStudioProjects/JavaFrontEnd/app/src/main/res/layout/activity_login.xml" value="0.17255434782608695" />
         <entry key="..\:/xht13127/AndroidStudioProjects/JavaFrontEnd/app/src/main/res/layout/activity_main_page.xml" value="0.17255434782608695" />
         <entry key="..\:/xht13127/AndroidStudioProjects/JavaFrontEnd/app/src/main/res/layout/activity_modify_password.xml" value="0.16394927536231885" />
         <entry key="..\:/xht13127/AndroidStudioProjects/JavaFrontEnd/app/src/main/res/layout/activity_start.xml" value="0.17255434782608695" />
+        <entry key="..\:/xht13127/AndroidStudioProjects/JavaFrontEnd/app/src/main/res/layout/entity_detail_content_list_group.xml" value="0.16" />
+        <entry key="..\:/xht13127/AndroidStudioProjects/JavaFrontEnd/app/src/main/res/layout/entity_detail_content_list_item.xml" value="0.264" />
+        <entry key="..\:/xht13127/AndroidStudioProjects/JavaFrontEnd/app/src/main/res/layout/entity_detail_item.xml" value="0.1" />
+        <entry key="..\:/xht13127/AndroidStudioProjects/JavaFrontEnd/app/src/main/res/layout/entity_detail_question_list_item.xml" value="0.264" />
         <entry key="..\:/xht13127/AndroidStudioProjects/JavaFrontEnd/app/src/main/res/layout/favourite_list_item.xml" value="0.264" />
         <entry key="..\:/xht13127/AndroidStudioProjects/JavaFrontEnd/app/src/main/res/layout/favourite_list_null_item.xml" value="0.29856115107913667" />
         <entry key="..\:/xht13127/AndroidStudioProjects/JavaFrontEnd/app/src/main/res/layout/fragment_ask_answer.xml" value="0.17255434782608695" />
@@ -74,5 +79,12 @@
   </component>
   <component name="ProjectType">
     <option name="id" value="Android" />
+  </component>
+  <component name="VisualizationToolProject">
+    <option name="state">
+      <ProjectState>
+        <option name="scale" value="0.1" />
+      </ProjectState>
+    </option>
   </component>
 </project>

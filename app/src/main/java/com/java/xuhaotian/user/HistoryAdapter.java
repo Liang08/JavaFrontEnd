@@ -49,7 +49,7 @@ public class HistoryAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder holder;
         if (convertView == null) {
-            convertView = LayoutInflater.from(mContext).inflate(R.layout.history_list_item,parent,false);
+            convertView = LayoutInflater.from(mContext).inflate(R.layout.history_list_item, parent,false);
             holder = new ViewHolder();
             holder.iv_icon= convertView.findViewById(R.id.iv_history_list_item_icon);
             holder.tv_name = convertView.findViewById(R.id.tv_history_list_item_name);
@@ -69,8 +69,8 @@ public class HistoryAdapter extends BaseAdapter {
     }
 
     static class ViewHolder{
-        ImageView iv_icon;
-        TextView tv_name;
-        Button btn_detail;
+        private ImageView iv_icon;
+        private TextView tv_name;
+        private Button btn_detail;
     }
 }
