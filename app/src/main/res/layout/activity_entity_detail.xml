@@ -20,6 +20,7 @@
             android:layout_marginTop="5dp"
             android:layout_weight="0"
             android:ellipsize="end"
+            android:longClickable="true"
             android:maxWidth="280dp"
             android:singleLine="false"
             android:text="社会主义（政治）"

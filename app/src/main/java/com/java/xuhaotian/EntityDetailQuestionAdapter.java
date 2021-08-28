@@ -18,6 +18,7 @@ public class EntityDetailQuestionAdapter extends BaseAdapter {
     private final List<Question> mData;
     private final Context mContext;
     private final List<String> mSelect;
+    private View.OnLongClickListener mShareListener;
 
     public EntityDetailQuestionAdapter(List<Question> mData, Context mContext) {
         this.mData = mData;
@@ -26,6 +27,10 @@ public class EntityDetailQuestionAdapter extends BaseAdapter {
         for (int i = 0; i < mData.size(); i++) {
             mSelect.add("");
         }
+    }
+
+    public void setShareListener(View.OnLongClickListener mShareListener) {
+        this.mShareListener = mShareListener;
     }
 
     @Override
@@ -83,6 +88,8 @@ public class EntityDetailQuestionAdapter extends BaseAdapter {
                 holder.rdoGroup.clearCheck();
         }
         holder.tv_body.setText(Html.fromHtml(mData.get(position).getQBody() + tips, Html.FROM_HTML_MODE_LEGACY));
+        holder.tv_body.setOnLongClickListener(mShareListener);
+        holder.tv_body.setTag(position);
         holder.rdoBtn_a.setText(mData.get(position).getA());
         holder.rdoBtn_b.setText(mData.get(position).getB());
         holder.rdoBtn_c.setText(mData.get(position).getC());

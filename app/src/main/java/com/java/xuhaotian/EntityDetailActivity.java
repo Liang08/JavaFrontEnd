@@ -40,6 +40,7 @@ import java.util.Map;
 public class EntityDetailActivity extends AppCompatActivity {
     private static final String TAG = "EntityDetailActivity";
 
+    private TextView mTvName;
     private Button mBtnReturn;
     private Switch mSwitchFavourite;
     private String course, name;
@@ -72,8 +73,9 @@ public class EntityDetailActivity extends AppCompatActivity {
         float dip = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1, getResources().getDisplayMetrics());
 
         mBtnReturn = findViewById(R.id.btn_entity_detail_return);
-        TextView mTvName = findViewById(R.id.tv_entity_detail_name);
+        mTvName = findViewById(R.id.tv_entity_detail_name);
         mTvName.setText(name);
+
         mSwitchFavourite = findViewById(R.id.switch_entity_detail_favourite);
         mSwitchFavourite.setEnabled(false);
         TableLayout mTlProperty = findViewById(R.id.tl_entity_detail_property);
@@ -195,6 +197,11 @@ public class EntityDetailActivity extends AppCompatActivity {
             }
             EntityDetailQuestionAdapter mQuestionAdapter = new EntityDetailQuestionAdapter(questionList, EntityDetailActivity.this);
             mLvQuestionList.setAdapter(mQuestionAdapter);
+            mQuestionAdapter.setShareListener(v -> {
+                int position = Integer.parseInt(v.getTag().toString());
+                Toast.makeText(EntityDetailActivity.this, "分享:" + questionList.get(position).getQBody(), Toast.LENGTH_SHORT).show();
+                return true;
+            });
             int mQuestionHeight = 10;
             for (int i = 0; i < mQuestionAdapter.getCount(); i++) {
                 View itemView = mQuestionAdapter.getView(i, null, mLvQuestionList);
@@ -215,6 +222,10 @@ public class EntityDetailActivity extends AppCompatActivity {
     }
 
     private void initEvents() {
+        mTvName.setOnLongClickListener(v -> {
+            Toast.makeText(EntityDetailActivity.this, "分享:" + name, Toast.LENGTH_SHORT).show();
+            return true;
+        });
         mSwitchFavourite.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (!buttonView.isEnabled()) {
                 return;
