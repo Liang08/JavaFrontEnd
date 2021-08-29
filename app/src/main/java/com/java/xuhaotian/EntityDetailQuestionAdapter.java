@@ -10,6 +10,10 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+
+import org.jetbrains.annotations.Contract;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,14 +22,19 @@ public class EntityDetailQuestionAdapter extends BaseAdapter {
     private final List<Question> mData;
     private final Context mContext;
     private final List<String> mSelect;
+    private View.OnLongClickListener mShareListener;
 
-    public EntityDetailQuestionAdapter(List<Question> mData, Context mContext) {
+    public EntityDetailQuestionAdapter(@NonNull List<Question> mData, Context mContext) {
         this.mData = mData;
         this.mContext = mContext;
         this.mSelect = new ArrayList<>();
         for (int i = 0; i < mData.size(); i++) {
             mSelect.add("");
         }
+    }
+
+    public void setShareListener(View.OnLongClickListener mShareListener) {
+        this.mShareListener = mShareListener;
     }
 
     @Override
@@ -83,6 +92,8 @@ public class EntityDetailQuestionAdapter extends BaseAdapter {
                 holder.rdoGroup.clearCheck();
         }
         holder.tv_body.setText(Html.fromHtml(mData.get(position).getQBody() + tips, Html.FROM_HTML_MODE_LEGACY));
+        holder.tv_body.setOnLongClickListener(mShareListener);
+        holder.tv_body.setTag(position);
         holder.rdoBtn_a.setText(mData.get(position).getA());
         holder.rdoBtn_b.setText(mData.get(position).getB());
         holder.rdoBtn_c.setText(mData.get(position).getC());
@@ -104,6 +115,8 @@ public class EntityDetailQuestionAdapter extends BaseAdapter {
         private RadioGroup rdoGroup;
     }
 
+    @NonNull
+    @Contract(pure = true)
     static String getOption(int id) {
         if (id == R.id.rdoBtn_entity_detail_question_list_item_a) return "A";
         if (id == R.id.rdoBtn_entity_detail_question_list_item_b) return "B";

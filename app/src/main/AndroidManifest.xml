@@ -13,10 +13,13 @@
         android:theme="@style/Theme.MyApplication"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".QuizActivity"
+            android:exported="true" />
+        <activity
             android:name=".EntityDetailActivity"
             android:exported="true" />
         <activity android:name=".user.RegisterActivity" />
-        <activity android:name=".ChannelSelectActivity"></activity>
+        <activity android:name=".ChannelSelectActivity" />
         <activity
             android:name=".user.FavouriteActivity"
             android:exported="true" />
