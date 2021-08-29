@@ -14,14 +14,18 @@
             android:layout_marginEnd="10dp"
             android:layout_marginStart="10dp"
             android:layout_gravity="center_vertical">
+
             <android.widget.Button
                 android:id="@+id/btn_set"
-                android:layout_height="50dp"
                 android:layout_width="wrap_content"
+                android:layout_height="50dp"
                 android:layout_alignParentEnd="true"
-                android:layout_margin="2dp"
+                android:layout_marginStart="2dp"
+                android:layout_marginTop="2dp"
+                android:layout_marginEnd="2dp"
+                android:layout_marginBottom="2dp"
                 android:text="设置"
-                android:textSize="16sp"/>
+                android:textSize="16sp" />
 
             <TextView
                 android:id="@+id/tv_search"

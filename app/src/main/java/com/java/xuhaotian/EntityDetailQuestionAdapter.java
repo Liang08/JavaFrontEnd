@@ -10,6 +10,10 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+
+import org.jetbrains.annotations.Contract;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,7 +24,7 @@ public class EntityDetailQuestionAdapter extends BaseAdapter {
     private final List<String> mSelect;
     private View.OnLongClickListener mShareListener;
 
-    public EntityDetailQuestionAdapter(List<Question> mData, Context mContext) {
+    public EntityDetailQuestionAdapter(@NonNull List<Question> mData, Context mContext) {
         this.mData = mData;
         this.mContext = mContext;
         this.mSelect = new ArrayList<>();
@@ -111,6 +115,8 @@ public class EntityDetailQuestionAdapter extends BaseAdapter {
         private RadioGroup rdoGroup;
     }
 
+    @NonNull
+    @Contract(pure = true)
     static String getOption(int id) {
         if (id == R.id.rdoBtn_entity_detail_question_list_item_a) return "A";
         if (id == R.id.rdoBtn_entity_detail_question_list_item_b) return "B";
