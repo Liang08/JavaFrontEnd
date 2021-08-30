@@ -2,12 +2,15 @@ package com.java.xuhaotian;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager2.widget.ViewPager2;
@@ -16,10 +19,16 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
 
 public class QuizActivity extends AppCompatActivity {
     private static final String TAG = "QuizActivity";
@@ -29,13 +38,16 @@ public class QuizActivity extends AppCompatActivity {
      */
     private String name;
 
-    private String error_message;
-
     private final List<Question> questionList = new ArrayList<>();
     private final List<String> answerList = new ArrayList<>();
 
+    ViewPager2 mVpQuestionList;
+    TextView mTvNotice;
     private Button mBtnSubmit, mBtnExit;
     private QuizAdapter mAdapter;
+
+    private Call answerCall = null;
+    private Call questionCall = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,31 +59,24 @@ public class QuizActivity extends AppCompatActivity {
 
         initViews();
         initEvents();
+        initData();
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (answerCall != null) answerCall.cancel();
+        if (questionCall != null) questionCall.cancel();
+        super.onDestroy();
     }
 
     private void initViews() {
-        ViewPager2 mVpQuestionList = findViewById(R.id.vp_quiz_question_list);
-        TextView mTvNotice = findViewById(R.id.tv_quiz_notice);
+        mVpQuestionList = findViewById(R.id.vp_quiz_question_list);
+        mVpQuestionList.setVisibility(View.INVISIBLE);
+        mTvNotice = findViewById(R.id.tv_quiz_notice);
+        mTvNotice.setVisibility(View.INVISIBLE);
         mBtnSubmit = findViewById(R.id.btn_quiz_submit);
         mBtnSubmit.setEnabled(false);
         mBtnExit = findViewById(R.id.btn_quiz_exit);
-
-        getQuestionList();
-        if (error_message == null) {
-            if (questionList.size() == 0) {
-                mVpQuestionList.setVisibility(View.GONE);
-                return;
-            }
-            mTvNotice.setVisibility(View.GONE);
-            for (int i = 0; i < questionList.size(); i++) answerList.add("");
-            mAdapter = new QuizAdapter(questionList, QuizActivity.this, answerList);
-            mVpQuestionList.setAdapter(mAdapter);
-
-            mBtnSubmit.setEnabled(true);
-        }
-        else {
-            Toast.makeText(QuizActivity.this, error_message, Toast.LENGTH_SHORT).show();
-        }
     }
 
     private void initEvents() {
@@ -98,41 +103,68 @@ public class QuizActivity extends AppCompatActivity {
         mBtnExit.setOnClickListener(v -> finish());
     }
 
-    private void getQuestionList() {
-        error_message = null;
-
+    private void initData() {
         Map<String, Object> params = new HashMap<>();
         params.put("name", name);
         params.put("token", Consts.getToken());
         String url;
         if (name.equals("")) url = "getRecommendQuestionList";
         else url = "getSpecialTopicQuestionList";
-        HttpRequest.MyResponse response = new HttpRequest().getRequest(Consts.backendURL + url, params);
+        questionCall = new HttpRequest().getRequestCall(Consts.backendURL + url, params);
+        questionCall.enqueue(new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                new Handler(Looper.getMainLooper()).post(() -> Toast.makeText(QuizActivity.this, "请求异常", Toast.LENGTH_SHORT).show());
+            }
 
-        if (response.code() == 200) {
-            try {
-                JSONArray question = new JSONArray(response.string());
-                questionList.clear();
-                for (int i = 0; i < question.length(); i++) {
-                    JSONObject obj = question.getJSONObject(i);
-                    questionList.add(new Question(
-                            obj.getString("qBody"),
-                            obj.getString("qAnswer"),
-                            obj.getString("A"),
-                            obj.getString("B"),
-                            obj.getString("C"),
-                            obj.getString("D"),
-                            obj.getInt("id")
-                    ));
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    try {
+                        JSONArray question = new JSONArray(Objects.requireNonNull(response.body()).string());
+                        new Handler(Looper.getMainLooper()).post(() -> initQuestion(question));
+                    } catch (NullPointerException | JSONException e) {
+                        Log.d(TAG, Log.getStackTraceString(e));
+                        new Handler(Looper.getMainLooper()).post(() -> Toast.makeText(QuizActivity.this, "请求异常", Toast.LENGTH_SHORT).show());
+                    }
                 }
+                else {
+                    new Handler(Looper.getMainLooper()).post(() -> Toast.makeText(QuizActivity.this, "请求失败", Toast.LENGTH_SHORT).show());
+                }
+            }
+        });
+    }
+
+    private void initQuestion(@NonNull JSONArray question) {
+        for (int i = 0; i < question.length(); i++) {
+            try {
+                JSONObject obj = question.getJSONObject(i);
+                questionList.add(new Question(
+                        obj.getString("qBody"),
+                        obj.getString("qAnswer"),
+                        obj.getString("A"),
+                        obj.getString("B"),
+                        obj.getString("C"),
+                        obj.getString("D"),
+                        obj.getInt("id")
+                ));
             } catch (JSONException e) {
-                error_message = "请求异常";
                 Log.d(TAG, Log.getStackTraceString(e));
             }
         }
-        else {
-            error_message = "请求失败(" + response.code() + ")";
+
+        if (questionList.size() == 0) {
+            mVpQuestionList.setVisibility(View.GONE);
+            mTvNotice.setVisibility(View.VISIBLE);
+            return;
         }
+        mTvNotice.setVisibility(View.GONE);
+        for (int i = 0; i < questionList.size(); i++) answerList.add("");
+        mAdapter = new QuizAdapter(questionList, QuizActivity.this, answerList);
+        mVpQuestionList.setAdapter(mAdapter);
+        mVpQuestionList.setVisibility(View.VISIBLE);
+
+        mBtnSubmit.setEnabled(true);
     }
 
     private void postAnswerList() {
@@ -147,10 +179,20 @@ public class QuizActivity extends AppCompatActivity {
             }
             params.put("answer", answer);
             params.put("token", Consts.getToken());
-            HttpRequest.MyResponse response = new HttpRequest().postRequest(Consts.backendURL + "answerQuestion", params);
-            if (response.code() != 200) {
-                Toast.makeText(QuizActivity.this, "上传做题记录失败", Toast.LENGTH_SHORT).show();
-            }
+            answerCall = new HttpRequest().postRequestCall(Consts.backendURL + "answerQuestion", params);
+            answerCall.enqueue(new Callback() {
+                @Override
+                public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                    new Handler(Looper.getMainLooper()).post(() -> Toast.makeText(QuizActivity.this, "上传做题记录失败", Toast.LENGTH_SHORT).show());
+                }
+
+                @Override
+                public void onResponse(@NonNull Call call, @NonNull Response response) {
+                    if (!response.isSuccessful()) {
+                        new Handler(Looper.getMainLooper()).post(() -> Toast.makeText(QuizActivity.this, "上传做题记录失败", Toast.LENGTH_SHORT).show());
+                    }
+                }
+            });
         } catch (JSONException e) {
             Log.d(TAG, Log.getStackTraceString(e));
             Toast.makeText(QuizActivity.this, "上传做题记录失败", Toast.LENGTH_SHORT).show();
