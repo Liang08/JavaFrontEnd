@@ -1,5 +1,9 @@
 package com.java.xuhaotian;
 
+import androidx.annotation.NonNull;
+
+import org.jetbrains.annotations.Contract;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -7,7 +11,7 @@ import java.util.HashMap;
 import okhttp3.MediaType;
 
 public class Consts {
-    public static final String backendURL = "http://183.172.10.42:8080/";
+    public static final String backendURL = "http://183.172.24.252:8080/";
 
     public static final MediaType JSON = MediaType.get("application/json; charset=utf-8");
     private static String token;
@@ -30,7 +34,9 @@ public class Consts {
         }
     };
 
-    public static String getSubjectName(String subject) {
+    @NonNull
+    @Contract(pure = true)
+    public static String getSubjectName(@NonNull String subject) {
         switch (subject) {
             case "语文":
                 return "chinese";

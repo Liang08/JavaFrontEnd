@@ -2,6 +2,9 @@ package com.java.xuhaotian.user;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +12,7 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -21,16 +25,27 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
 
 public class HistoryActivity extends AppCompatActivity {
+    private static final String TAG = "HistoryActivity";
+
     private Button mBtnClear, mBtnReturn;
-    private final List<Pair<String, String>> history = new ArrayList<>();
-    private String error_message;
-    private HistoryAdapter mAdapter;
+    private ListView mLvList;
     private View footView;
+
+    private final List<Pair<String, String>> history = new ArrayList<>();
+    private HistoryAdapter mAdapter = null;
+
+    private Call historyCall = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,67 +54,23 @@ public class HistoryActivity extends AppCompatActivity {
 
         initViews();
         initEvents();
+        initData();
     }
 
-    private void getHistory() {
-        history.clear();
-        try {
-            HashMap<String, Object> params = new HashMap<>();
-            params.put("token", Consts.getToken());
-            HttpRequest.MyResponse response = new HttpRequest().getRequest(Consts.backendURL + "getInstanceHistory", params);
-            if (response.code() == 200) {
-                JSONArray jsonArray = new JSONArray(response.string());
-                for (int i = 0; i < jsonArray.length(); i++) {
-                    JSONObject obj = jsonArray.getJSONObject(i);
-                    String course = obj.keys().next();
-                    String name = obj.getString(course);
-                    history.add(Pair.create(course, name));
-                }
-                error_message = null;
-            }
-            else if (response.code() == 401) {
-                JSONObject obj = new JSONObject(response.string());
-                error_message = obj.getString("message") + "";
-            }
-            else {
-                error_message = "请求失败(" + response.code() + ")";
-            }
-        } catch (Exception e) {
-            error_message = "请求异常";
-            e.printStackTrace();
-        }
+    @Override
+    protected void onDestroy() {
+        if (historyCall != null) historyCall.cancel();
+        super.onDestroy();
     }
 
     private void initViews() {
         mBtnClear = findViewById(R.id.btn_history_clear);
         mBtnClear.setEnabled(false);
         mBtnReturn = findViewById(R.id.btn_history_return);
-        ListView mLvList = findViewById(R.id.lv_history_list);
+        mLvList = findViewById(R.id.lv_history_list);
         footView = LayoutInflater.from(this).inflate(R.layout.history_list_null_item, null, false);
-        getHistory();
-        if (error_message == null) {
-            mLvList.addFooterView(footView);
-            if (history.size() == 0) {
-                footView.setVisibility(View.VISIBLE);
-            }
-            else {
-                footView.setVisibility(View.INVISIBLE);
-            }
-            mAdapter = new HistoryAdapter(history, HistoryActivity.this);
-            mAdapter.setDetailListener(v -> {
-                int position = Integer.parseInt(v.getTag().toString());
-                Intent intent = new Intent(HistoryActivity.this, EntityDetailActivity.class);
-                intent.putExtra("course", history.get(position).first);
-                intent.putExtra("name", history.get(position).second);
-                startActivityForResult(intent, 1);
-            });
-
-            mLvList.setAdapter(mAdapter);
-            mBtnClear.setEnabled(true);
-        }
-        else {
-            Toast.makeText(HistoryActivity.this, "历史记录获取失败：" + error_message, Toast.LENGTH_SHORT).show();
-        }
+        mLvList.addFooterView(footView);
+        footView.setVisibility(View.INVISIBLE);
     }
 
     private void initEvents() {
@@ -125,25 +96,77 @@ public class HistoryActivity extends AppCompatActivity {
         mBtnReturn.setOnClickListener(v -> finish());
     }
 
+    private void initData() {
+        HashMap<String, Object> params = new HashMap<>();
+        params.put("token", Consts.getToken());
+        historyCall = new HttpRequest().getRequestCall(Consts.backendURL + "getInstanceHistory", params);
+        historyCall.enqueue(new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                new Handler(Looper.getMainLooper()).post(() -> Toast.makeText(HistoryActivity.this, "请求异常", Toast.LENGTH_SHORT).show());
+            }
+
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    try {
+                        JSONArray jsonArray = new JSONArray(Objects.requireNonNull(response.body()).string());
+                        new Handler(Looper.getMainLooper()).post(() ->initHistory(jsonArray));
+                    } catch (NullPointerException | JSONException e) {
+                        new Handler(Looper.getMainLooper()).post(() -> Toast.makeText(HistoryActivity.this, "请求异常", Toast.LENGTH_SHORT).show());
+                    }
+                } else {
+                    new Handler(Looper.getMainLooper()).post(() -> Toast.makeText(HistoryActivity.this, "请求失败", Toast.LENGTH_SHORT).show());
+                }
+            }
+        });
+    }
+
+    private void initHistory(@NonNull JSONArray jsonArray) {
+        for (int i = 0; i < jsonArray.length(); i++) {
+            try {
+                JSONObject obj = jsonArray.getJSONObject(i);
+                String course = obj.keys().next();
+                String name = obj.getString(course);
+                history.add(Pair.create(course, name));
+            } catch (JSONException e) {
+                Log.d(TAG, Log.getStackTraceString(e));
+            }
+        }
+
+        if (history.size() == 0) {
+            footView.setVisibility(View.VISIBLE);
+        }
+        else {
+            footView.setVisibility(View.INVISIBLE);
+        }
+
+        if (mAdapter == null) {
+            mAdapter = new HistoryAdapter(history, HistoryActivity.this);
+            mAdapter.setDetailListener(v -> {
+                int position = Integer.parseInt(v.getTag().toString());
+                Intent intent = new Intent(HistoryActivity.this, EntityDetailActivity.class);
+                intent.putExtra("course", history.get(position).first);
+                intent.putExtra("name", history.get(position).second);
+                startActivityForResult(intent, 1);
+            });
+            mLvList.setAdapter(mAdapter);
+        }
+        else {
+            mAdapter.notifyDataSetChanged();
+        }
+        mBtnClear.setEnabled(true);
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 1) {
             mBtnClear.setEnabled(false);
-            getHistory();
-            if (error_message != null) {
-                Toast.makeText(HistoryActivity.this, "历史记录获取失败：" + error_message, Toast.LENGTH_SHORT).show();
-            }
-            else {
-                mBtnClear.setEnabled(true);
-            }
-            if (history.size() == 0) {
-                footView.setVisibility(View.VISIBLE);
-            }
-            else {
-                footView.setVisibility(View.INVISIBLE);
-            }
+            footView.setVisibility(View.INVISIBLE);
+            history.clear();
             mAdapter.notifyDataSetChanged();
+            initData();
         }
     }
 }
