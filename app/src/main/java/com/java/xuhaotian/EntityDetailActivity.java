@@ -49,7 +49,7 @@ public class EntityDetailActivity extends AppCompatActivity {
     private static final String TAG = "EntityDetailActivity";
 
     private TextView mTvName;
-    private Button mBtnReturn;
+    private Button mBtnReturn, mBtnQuiz;
     private Switch mSwitchFavourite;
     TableLayout mTlProperty;
     ExpandableListView mExLvContentList;
@@ -89,6 +89,7 @@ public class EntityDetailActivity extends AppCompatActivity {
 
     private void initViews() {
         mBtnReturn = findViewById(R.id.btn_entity_detail_return);
+        mBtnQuiz = findViewById(R.id.btn_entity_detail_quiz);
         mTvName = findViewById(R.id.tv_entity_detail_name);
         mTvName.setText(name);
 
@@ -264,6 +265,11 @@ public class EntityDetailActivity extends AppCompatActivity {
         mBtnReturn.setOnClickListener(v -> {
             setResult(RESULT_OK);
             finish();
+        });
+        mBtnQuiz.setOnClickListener(v -> {
+            Intent intent = new Intent(EntityDetailActivity.this, QuizActivity.class);
+            intent.putExtra("name", name);
+            startActivity(intent);
         });
     }
 
