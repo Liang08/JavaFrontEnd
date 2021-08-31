@@ -72,6 +72,13 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
+            <Button
+                android:id="@+id/btn_entity_detail_quiz"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="专项测试"
+                android:textSize="20sp" />
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
