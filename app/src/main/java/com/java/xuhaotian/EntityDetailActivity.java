@@ -44,8 +44,19 @@ import java.util.concurrent.atomic.AtomicInteger;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
+import com.sina.weibo.sdk.api.ImageObject;
+import com.sina.weibo.sdk.api.MultiImageObject;
+import com.sina.weibo.sdk.api.TextObject;
+import com.sina.weibo.sdk.api.VideoSourceObject;
+import com.sina.weibo.sdk.api.WebpageObject;
+import com.sina.weibo.sdk.api.WeiboMultiMessage;
+import com.sina.weibo.sdk.auth.AuthInfo;
+import com.sina.weibo.sdk.common.UiError;
+import com.sina.weibo.sdk.openapi.IWBAPI;
+import com.sina.weibo.sdk.openapi.WBAPIFactory;
+import com.sina.weibo.sdk.share.WbShareCallback;
 
-public class EntityDetailActivity extends AppCompatActivity {
+public class EntityDetailActivity extends AppCompatActivity implements WbShareCallback {
     private static final String TAG = "EntityDetailActivity";
 
     private TextView mTvName;
@@ -64,6 +75,39 @@ public class EntityDetailActivity extends AppCompatActivity {
     private Call instanceCall = null;
     private Call questionCall = null;
 
+    //在微博开发平台为应用申请的App Key
+    private static final String APP_KY = "2045436852";
+    //在微博开放平台设置的授权回调页
+    private static final String REDIRECT_URL = "http://www.sina.com";
+    //在微博开放平台为应用申请的高级权限
+    private static final String SCOPE =
+            "email,direct_messages_read,direct_messages_write,"
+                    + "friendships_groups_read,friendships_groups_write,statuses_to_me_read,"
+                    + "follow_app_official_microblog," + "invitation_write";
+
+    private IWBAPI mWBAPI;
+
+    @Override
+    public void onComplete() {
+        Toast.makeText(EntityDetailActivity.this, "分享成功", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onError(@NonNull UiError error) {
+        Toast.makeText(EntityDetailActivity.this, "分享失败:" + error.errorMessage, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onCancel() {
+        Toast.makeText(EntityDetailActivity.this, "分享取消", Toast.LENGTH_SHORT).show();
+    }
+
+    private void initSdk() {
+        AuthInfo authInfo = new AuthInfo(this, APP_KY, REDIRECT_URL, SCOPE);
+        mWBAPI = WBAPIFactory.createWBAPI(this);
+        mWBAPI.registerApp(this, authInfo);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,6 +120,8 @@ public class EntityDetailActivity extends AppCompatActivity {
         initViews();
         initEvents();
         initData();
+
+        initSdk();
     }
 
     @Override
@@ -221,7 +267,15 @@ public class EntityDetailActivity extends AppCompatActivity {
         mLvQuestionList.setAdapter(mQuestionAdapter);
         mQuestionAdapter.setShareListener(v -> {
             int position = Integer.parseInt(v.getTag().toString());
-            Toast.makeText(EntityDetailActivity.this, "分享:" + questionList.get(position).getQBody(), Toast.LENGTH_SHORT).show();
+
+            // Toast.makeText(EntityDetailActivity.this, "分享:" + questionList.get(position).getQBody(), Toast.LENGTH_SHORT).show();
+
+            WeiboMultiMessage message = new WeiboMultiMessage();
+            TextObject textObject = new TextObject();
+            textObject.text = "一起来做题：" + questionList.get(position).getQBody();
+            message.textObject = textObject;
+            mWBAPI.shareMessage(message, true);
+
             return true;
         });
         int mQuestionHeight = 10;
@@ -236,7 +290,14 @@ public class EntityDetailActivity extends AppCompatActivity {
 
     private void initEvents() {
         mTvName.setOnLongClickListener(v -> {
-            Toast.makeText(EntityDetailActivity.this, "分享:" + name, Toast.LENGTH_SHORT).show();
+            // Toast.makeText(EntityDetailActivity.this, "分享:" + name, Toast.LENGTH_SHORT).show();
+
+            WeiboMultiMessage message = new WeiboMultiMessage();
+            TextObject textObject = new TextObject();
+            textObject.text = "一起来学习：" + name;
+            message.textObject = textObject;
+            mWBAPI.shareMessage(message, true);
+
             return true;
         });
         mSwitchFavourite.setOnCheckedChangeListener((buttonView, isChecked) -> {
@@ -276,6 +337,9 @@ public class EntityDetailActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        if (mWBAPI != null) {
+            mWBAPI.doResultIntent(data, this);
+        }
         if (requestCode == 1) {
             initIsFavourite();
             isWaiting = false;
