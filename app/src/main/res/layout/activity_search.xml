@@ -16,24 +16,24 @@
             android:layout_width="80dp"
             android:layout_height="match_parent"
             android:layout_alignParentEnd="true"
+            android:layout_marginEnd="5dp"
             android:background="@drawable/bg_btn_login"
             android:text="取消"
-            android:textColor="#FFFFFF"
-            android:layout_marginEnd="5dp"/>
+            android:textColor="#FFFFFF" />
 
         <EditText
             android:id="@+id/et_search"
-            android:hint="输入内容"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_marginStart="5dp"
             android:layout_toStartOf="@id/btn_cancel"
             android:background="@drawable/bg_username"
-            android:paddingStart="10dp"
-            android:paddingEnd="10dp"
-            android:layout_marginStart="5dp"
+            android:hint="输入内容"
+            android:imeOptions="actionSearch"
             android:inputType="text"
             android:maxLines="1"
-            android:imeOptions="actionSearch"/>
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp" />
 
     </RelativeLayout>
 

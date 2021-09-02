@@ -1,16 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center"
-    android:orientation="vertical">
-    <TextView
-        android:id="@+id/tv_title"
+    android:orientation="horizontal">
+
+
+    <androidx.recyclerview.widget.RecyclerView
+
+        android:id="@+id/messages_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Ask and Answer"
-        android:textSize="30sp"
-        android:textColor="@color/black"
-        android:gravity="center"/>
+        android:layout_above="@+id/send_message_layout"
+        android:layout_alignBaseline="@id/send_message_layout"
+        android:layout_alignParentTop="true"
+        android:layout_marginBottom="0dp" />
 
-</LinearLayout>
+    <Button
+        android:id="@+id/btn_AskAnsDel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:layout_alignEnd="@id/send_message_layout"
+        android:paddingVertical="10dp"
+        android:paddingLeft="0dp"
+        android:paddingTop="0dp"
+        android:paddingRight="0dp"
+        android:text="清空记录"
+        android:textSize="15sp" />
+
+    <LinearLayout
+        android:id="@+id/send_message_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="#ffdddddd"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+
+        <EditText
+            android:id="@+id/et_AskMsg"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:inputType="text"/>
+
+        <Button
+            android:id="@+id/btn_AskAns"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_btn_login"
+            android:textColor="@color/white"
+            android:text="发送"
+            android:textSize="20sp"/>
+    </LinearLayout>
+
+</RelativeLayout>
