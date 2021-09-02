@@ -125,7 +125,7 @@ public class AskAnswerFragment extends Fragment {
                                     ask = ansJSON.getJSONObject(0).getString("value");
                                     if (ask.equals("") ){ask = ansJSON.getJSONObject(0).getString("message");}
                                 } else {
-                                    ask = "连接问题";
+                                    ask = getString(R.string.connectError);
                                     Log.d("test", "--sending fail:" + response.code() + "---");
                                 }
 
@@ -152,6 +152,7 @@ public class AskAnswerFragment extends Fragment {
                                              @Override
                                              public void onClick(View v) {
                                                  msgList.clear();
+                                                 adapter.notifyDataSetChanged();
                                              }
                                          }
 
