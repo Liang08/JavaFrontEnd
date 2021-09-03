@@ -26,23 +26,24 @@
         <entry key="..\:/JavaFrontEnd/app/src/main/res/layout/entity_detail_content_list_group.xml" value="0.2" />
         <entry key="..\:/JavaFrontEnd/app/src/main/res/layout/entity_detail_content_list_item.xml" value="0.264" />
         <entry key="..\:/JavaFrontEnd/app/src/main/res/layout/entity_detail_question_list_item.xml" value="0.536" />
-        <entry key="..\:/JavaFrontEnd/app/src/main/res/layout/favourite_list_item.xml" value="0.2" />
+        <entry key="..\:/JavaFrontEnd/app/src/main/res/layout/favourite_list_item.xml" value="0.6" />
         <entry key="..\:/JavaFrontEnd/app/src/main/res/layout/favourite_list_null_item.xml" value="0.4" />
-        <entry key="..\:/JavaFrontEnd/app/src/main/res/layout/fragment_ask_answer.xml" value="0.43944636678200694" />
+        <entry key="..\:/JavaFrontEnd/app/src/main/res/layout/fragment_ask_answer.xml" value="0.264" />
         <entry key="..\:/JavaFrontEnd/app/src/main/res/layout/fragment_ask_answer_message.xml" value="0.2" />
         <entry key="..\:/JavaFrontEnd/app/src/main/res/layout/fragment_ask_answer_message_left.xml" value="0.4" />
         <entry key="..\:/JavaFrontEnd/app/src/main/res/layout/fragment_entity_list.xml" value="0.4" />
         <entry key="..\:/JavaFrontEnd/app/src/main/res/layout/fragment_link_page.xml" value="0.25364583333333335" />
         <entry key="..\:/JavaFrontEnd/app/src/main/res/layout/fragment_review.xml" value="0.25364583333333335" />
         <entry key="..\:/JavaFrontEnd/app/src/main/res/layout/fragment_user_page.xml" value="0.25364583333333335" />
-        <entry key="..\:/JavaFrontEnd/app/src/main/res/layout/history_list_item.xml" value="0.12335359675785208" />
+        <entry key="..\:/JavaFrontEnd/app/src/main/res/layout/history_list_item.xml" value="0.4" />
         <entry key="..\:/JavaFrontEnd/app/src/main/res/layout/history_list_null_item.xml" value="0.12335359675785208" />
-        <entry key="..\:/JavaFrontEnd/app/src/main/res/layout/listview_entity.xml" value="0.1" />
+        <entry key="..\:/JavaFrontEnd/app/src/main/res/layout/listview_entity.xml" value="0.264" />
         <entry key="..\:/JavaFrontEnd/app/src/main/res/layout/quiz_question_list_item.xml" value="0.1" />
         <entry key="..\:/JavaFrontEnd/app/src/main/res/layout/recyclerview_add_list.xml" value="0.4" />
         <entry key="..\:/JavaFrontEnd/app/src/main/res/layout/recyclerview_subject.xml" value="0.1" />
         <entry key="..\:/JavaFrontEnd/app/src/main/res/layout/search_bar.xml" value="0.25364583333333335" />
         <entry key="..\:/JavaFrontEnd/app/src/main/res/layout/tab_button.xml" value="0.25364583333333335" />
+        <entry key="..\:/JavaFrontEnd/app/src/main/res/layout/test.xml" value="0.25364583333333335" />
         <entry key="..\:/JavaFrontEnd/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.26979166666666665" />
         <entry key="..\:/JavaFrontEnd/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.26979166666666665" />
       </map>

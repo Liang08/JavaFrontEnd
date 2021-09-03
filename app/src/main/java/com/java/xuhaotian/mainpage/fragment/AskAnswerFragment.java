@@ -1,7 +1,11 @@
 package com.java.xuhaotian.mainpage.fragment;
 
 import static com.java.xuhaotian.Consts.JSON;
+import static com.java.xuhaotian.Consts.getSubjectName;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -11,6 +15,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -22,6 +28,7 @@ import com.java.xuhaotian.Consts;
 import com.java.xuhaotian.R;
 import com.java.xuhaotian.adapter.AskAnswerMsgAdapter;
 import com.java.xuhaotian.AskAnswerMsg;
+import com.java.xuhaotian.mainpage.MainPageActivity;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -36,13 +43,15 @@ import okhttp3.Response;
 public class AskAnswerFragment extends Fragment {
     private ArrayList<AskAnswerMsg> msgList = new ArrayList<>();
     private RecyclerView msgRecyclerView;
+    private ImageView mIvAskAnswerSubject;
+    private TextView mTvAskAnswerSubject;
     private AskAnswerMsgAdapter adapter;
     private EditText mEtAskMsg;
     private Button mBtnAskAns;
     private Button mBtnAskAnsDel;
-    private static final int SEND = 0;
+    private Button mBtnAskAnsSubject;
     private static final int RECEIVE = 1;
-    private String ask;
+    private String ask,subjectString;
 
     Handler handler = new Handler(new Handler.Callback() {
         @Override
@@ -81,6 +90,9 @@ public class AskAnswerFragment extends Fragment {
         mEtAskMsg = view.findViewById(R.id.et_AskMsg);
         mBtnAskAns = view.findViewById(R.id.btn_AskAns);
         mBtnAskAnsDel = view.findViewById(R.id.btn_AskAnsDel);
+        mBtnAskAnsSubject = view.findViewById(R.id.btn_AskAnsSubChoose);
+        mIvAskAnswerSubject = view.findViewById(R.id.ask_answer_subject_icon);
+        mTvAskAnswerSubject = view.findViewById(R.id.tv_ask_answer_subject);
     }
 
     @Override
@@ -92,6 +104,83 @@ public class AskAnswerFragment extends Fragment {
         adapter = new AskAnswerMsgAdapter(msgList);
         msgRecyclerView.setAdapter(adapter);
         initMsg();
+
+        mBtnAskAnsSubject.setOnClickListener(new View.OnClickListener() {
+            final String[] subjects = Consts.getTotal().toArray(new String[0]);
+            private final ButtonOnClick buttonOnClick = new ButtonOnClick(1);
+
+            /*public String getAskAnswerSubject(){
+                return subjects[buttonOnClick.index];
+            }*/
+
+            @Override
+            public void onClick(View v) {
+                showSingleChoiceButton();
+            }
+            private void showSingleChoiceButton()
+            {
+                AlertDialog.Builder builder = new AlertDialog.Builder(AskAnswerFragment.super.getContext());
+                builder.setTitle("请选择学科");
+                builder.setSingleChoiceItems(subjects, buttonOnClick.index, buttonOnClick);
+                builder.setPositiveButton("确定", buttonOnClick);
+                builder.setNegativeButton("取消", buttonOnClick);
+                builder.show();
+            }
+            class ButtonOnClick implements DialogInterface.OnClickListener
+            {
+
+                public int index;
+
+                public ButtonOnClick(int index)
+                {
+                    this.index = index;
+                }
+
+                @Override
+                public void onClick(DialogInterface dialog, int which)
+                {
+                    if (which >= 0)
+                    {
+                        index = which;
+                    }
+                    else
+                    {
+                        if (which == DialogInterface.BUTTON_POSITIVE)
+                        {
+                            subjectString = subjects[buttonOnClick.index];
+                            mTvAskAnswerSubject.setText(subjectString);
+                            switch (subjectString){
+                                case "语文":mIvAskAnswerSubject.setImageResource(R.drawable.chinese);
+                                    break;
+                                case "数学":mIvAskAnswerSubject.setImageResource(R.drawable.math);
+                                    break;
+                                case "英语":mIvAskAnswerSubject.setImageResource(R.drawable.english);
+                                    break;
+                                case "生物":mIvAskAnswerSubject.setImageResource(R.drawable.biology);
+                                    break;
+                                case "物理":mIvAskAnswerSubject.setImageResource(R.drawable.physics);
+                                    break;
+                                case "化学":mIvAskAnswerSubject.setImageResource(R.drawable.chemistry);
+                                    break;
+                                case "政治":mIvAskAnswerSubject.setImageResource(R.drawable.politics);
+                                    break;
+                                case "历史":mIvAskAnswerSubject.setImageResource(R.drawable.history);
+                                    break;
+                                case "地理":mIvAskAnswerSubject.setImageResource(R.drawable.geography);
+                                    break;
+                                default:
+                                    break;
+                            }
+                            dialog.dismiss();
+                        }
+                        else if (which == DialogInterface.BUTTON_NEGATIVE)
+                        {
+                            dialog.dismiss();
+                        }
+                    }
+                }
+            }
+        });
 
         mBtnAskAns.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -109,6 +198,7 @@ public class AskAnswerFragment extends Fragment {
                             if (!"".equals(ask)) {
 
                                 JSONObject askJSON = new JSONObject();
+                                askJSON.put("course", getSubjectName(subjectString));
                                 askJSON.put("inputQuestion", ask);
                                 askJSON.put("token", Consts.getToken());
                                 OkHttpClient client = new OkHttpClient();

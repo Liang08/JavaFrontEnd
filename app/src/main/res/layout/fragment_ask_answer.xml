@@ -3,36 +3,80 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="horizontal">
 
-
-    <androidx.recyclerview.widget.RecyclerView
-
-        android:id="@+id/messages_view"
+    <LinearLayout
+        android:id="@+id/ask_answer_top_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/send_message_layout"
-        android:layout_alignBaseline="@id/send_message_layout"
-        android:layout_alignParentTop="true"
-        android:layout_marginBottom="0dp" />
+        android:layout_alignParentTop="true">
 
-    <Button
-        android:id="@+id/btn_AskAnsDel"
-        android:layout_width="wrap_content"
+        <ImageView
+            android:id="@+id/ask_answer_subject_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0"
+            android:contentDescription="图标"
+            android:maxWidth="48dp"
+            android:maxHeight="48dp"
+            android:minWidth="48dp"
+            android:minHeight="48dp"
+            android:padding="2dp"
+            android:paddingLeft="2dp"
+            android:paddingTop="2dp"
+            android:paddingRight="2dp"
+            android:paddingBottom="2dp"
+            app:srcCompat="@drawable/chinese" />
+
+        <TextView
+            android:id="@+id/tv_ask_answer_subject"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:height="48dp"
+            android:maxWidth="300dp"
+            android:text="选择学科"
+            android:textSize="24sp" />
+
+        <Button
+            android:id="@+id/btn_AskAnsSubChoose"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="选择学科"
+            android:textSize="15sp"
+            android:layout_marginRight="5dp"/>
+
+        <Button
+            android:id="@+id/btn_AskAnsDel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:text="清空记录"
+            android:textSize="15sp" />
+    </LinearLayout>
+
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="end"
-        android:layout_alignEnd="@id/send_message_layout"
-        android:paddingVertical="10dp"
-        android:paddingLeft="0dp"
-        android:paddingTop="0dp"
-        android:paddingRight="0dp"
-        android:text="清空记录"
-        android:textSize="15sp" />
+        android:layout_below="@id/ask_answer_top_layout"
+        android:layout_above="@+id/send_message_layout">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/messages_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            />
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+
 
     <LinearLayout
         android:id="@+id/send_message_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+
         android:layout_alignParentBottom="true"
         android:background="#ffdddddd"
         android:gravity="center_vertical"
