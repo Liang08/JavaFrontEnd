@@ -55,7 +55,7 @@ public class FavouriteAdapter extends BaseAdapter {
         if (convertView == null) {
             convertView = LayoutInflater.from(mContext).inflate(R.layout.favourite_list_item, parent,false);
             holder = new ViewHolder();
-            holder.iv_icon= convertView.findViewById(R.id.iv_favourite_list_item_icon);
+            holder.iv_icon = convertView.findViewById(R.id.iv_favourite_list_item_icon);
             holder.tv_name = convertView.findViewById(R.id.tv_favourite_list_item_name);
             holder.btn_detail = convertView.findViewById(R.id.btn_favourite_list_item_detail);
             holder.btn_remove = convertView.findViewById(R.id.btn_favourite_list_item_remove);

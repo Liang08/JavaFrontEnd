@@ -1,6 +1,6 @@
 package com.java.xuhaotian.user;
 
-import androidx.appcompat.app.AppCompatActivity;
+import static com.java.xuhaotian.Consts.JSON;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,29 +10,21 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.java.xuhaotian.Consts;
+import com.java.xuhaotian.MD5;
 import com.java.xuhaotian.R;
 import com.java.xuhaotian.mainpage.MainPageActivity;
 
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLDecoder;
 import java.util.Objects;
 
-import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-
-import static com.java.xuhaotian.Consts.JSON;
 
 public class LoginActivity extends AppCompatActivity {
     private EditText etUser, etPassword;
@@ -47,23 +39,24 @@ public class LoginActivity extends AppCompatActivity {
         initEvent();
     }
 
-    public void initViews(){
+    public void initViews() {
         etUser = findViewById(R.id.et_username);
         etPassword = findViewById(R.id.et_password);
         mBtnLogin = findViewById(R.id.btn_login);
         mBtnRegister = findViewById(R.id.btn_register);
     }
 
-    public void initEvent(){
+    public void initEvent() {
         mBtnLogin.setOnClickListener(v -> {
             String username = etUser.getText().toString();
             String password = etPassword.getText().toString();
+
             Thread thread = new Thread(() -> {
                 password_correct = false;
                 try {
                     JSONObject json = new JSONObject();
                     json.put("userName", username);
-                    json.put("password", password);
+                    json.put("password", MD5.md5(password));
                     OkHttpClient client = new OkHttpClient();
                     RequestBody body = RequestBody.create(String.valueOf(json), JSON);
                     Request request = new Request.Builder()
@@ -71,38 +64,35 @@ public class LoginActivity extends AppCompatActivity {
                             .post(body)
                             .build();
                     Response response = client.newCall(request).execute();
-                    if (response.code() == 200){
+                    if (response.code() == 200) {
                         Consts.setToken(Objects.requireNonNull(response.body()).string());
                         Consts.setUserName(username);
                         Log.d("code", Consts.getToken());
                         password_correct = true;
                     }
-                }catch (Exception e){
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             });
             thread.start();
             try {
                 thread.join();
-            }catch (InterruptedException e) {
+            } catch (InterruptedException e) {
                 e.printStackTrace();
             }
 
-            if (password_correct){
+            if (password_correct) {
                 Toast.makeText(LoginActivity.this, "登录成功", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(LoginActivity.this, MainPageActivity.class);
                 startActivity(intent);
-            }else{
+            } else {
                 Toast.makeText(LoginActivity.this, "密码错误", Toast.LENGTH_SHORT).show();
             }
         });
 
-        mBtnRegister.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
-                startActivity(intent);
-            }
+        mBtnRegister.setOnClickListener(v -> {
+            Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
+            startActivity(intent);
         });
     }
 }

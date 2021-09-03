@@ -51,7 +51,7 @@ public class HistoryAdapter extends BaseAdapter {
         if (convertView == null) {
             convertView = LayoutInflater.from(mContext).inflate(R.layout.history_list_item, parent,false);
             holder = new ViewHolder();
-            holder.iv_icon= convertView.findViewById(R.id.iv_history_list_item_icon);
+            holder.iv_icon = convertView.findViewById(R.id.iv_history_list_item_icon);
             holder.tv_name = convertView.findViewById(R.id.tv_history_list_item_name);
             holder.btn_detail = convertView.findViewById(R.id.btn_history_list_item_detail);
             convertView.setTag(holder);
