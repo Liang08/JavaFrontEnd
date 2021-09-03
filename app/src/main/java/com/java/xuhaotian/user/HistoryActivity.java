@@ -111,7 +111,7 @@ public class HistoryActivity extends AppCompatActivity {
                 if (response.isSuccessful()) {
                     try {
                         JSONArray jsonArray = new JSONArray(Objects.requireNonNull(response.body()).string());
-                        new Handler(Looper.getMainLooper()).post(() ->initHistory(jsonArray));
+                        new Handler(Looper.getMainLooper()).post(() -> initHistory(jsonArray));
                     } catch (NullPointerException | JSONException e) {
                         new Handler(Looper.getMainLooper()).post(() -> Toast.makeText(HistoryActivity.this, "请求异常", Toast.LENGTH_SHORT).show());
                     }

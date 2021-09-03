@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.java.xuhaotian.Consts;
 import com.java.xuhaotian.HttpRequest;
+import com.java.xuhaotian.MD5;
 import com.java.xuhaotian.R;
 
 import org.json.JSONObject;
@@ -40,10 +41,6 @@ public class ModifyPasswordActivity extends AppCompatActivity {
             String oldPassword = etOldPassword.getText().toString();
             String newPassword = etNewPassword.getText().toString();
             String newPasswordAgain = etNewPasswordAgain.getText().toString();
-            if (newPassword.isEmpty()) {
-                Toast.makeText(ModifyPasswordActivity.this, "密码不能为空", Toast.LENGTH_SHORT).show();
-                return;
-            }
             if (!newPassword.equals(newPasswordAgain)) {
                 Toast.makeText(ModifyPasswordActivity.this, "两次输入密码不一致", Toast.LENGTH_SHORT).show();
                 return;
@@ -52,8 +49,8 @@ public class ModifyPasswordActivity extends AppCompatActivity {
             try {
                 modify_ok = false;
                 JSONObject json = new JSONObject();
-                json.put("oldPassword", oldPassword);
-                json.put("newPassword", newPassword);
+                json.put("oldPassword", MD5.md5(oldPassword));
+                json.put("newPassword", MD5.md5(newPassword));
                 json.put("token", Consts.getToken());
                 HttpRequest.MyResponse response = new HttpRequest().putRequest(Consts.backendURL + "modifyPassword", json);
                 if (response.code() == 200) {

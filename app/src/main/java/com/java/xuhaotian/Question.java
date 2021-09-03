@@ -1,8 +1,13 @@
 package com.java.xuhaotian;
 
 public class Question {
-    private String qBody, qAnswer, a, b, c, d;
-    private int id;
+    private final String qBody;
+    private final String qAnswer;
+    private final String a;
+    private final String b;
+    private final String c;
+    private final String d;
+    private final int id;
 
     public Question(String qBody, String qAnswer, String a, String b, String c, String d, int id) {
         this.qBody = qBody;
