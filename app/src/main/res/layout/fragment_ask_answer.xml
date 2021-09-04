@@ -36,7 +36,7 @@
             android:layout_weight="1"
             android:height="48dp"
             android:maxWidth="300dp"
-            android:text="选择学科"
+            android:text="未选择学科"
             android:textSize="24sp" />
 
         <Button

@@ -5,7 +5,6 @@ import static com.java.xuhaotian.Consts.getSubjectName;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -51,7 +50,7 @@ public class AskAnswerFragment extends Fragment {
     private Button mBtnAskAnsDel;
     private Button mBtnAskAnsSubject;
     private static final int RECEIVE = 1;
-    private String ask,subjectString;
+    private String ask,subjectString = "";
 
     Handler handler = new Handler(new Handler.Callback() {
         @Override
@@ -62,17 +61,46 @@ public class AskAnswerFragment extends Fragment {
                 msgList.add(msgLeft);
                 adapter.notifyItemChanged(msgList.size()-1);
                 msgRecyclerView.scrollToPosition(msgList.size()-1);
-                //adapter = new AskAnswerMsgAdapter(msgList);
-                //msgRecyclerView.setAdapter(adapter);
-
             }
             return false;
         }
     }) ;
 
     public void initMsg() {
-        AskAnswerMsg msgLeft = new AskAnswerMsg("请提问",AskAnswerMsg.TYPE_RECEIVE);
+        AskAnswerMsg msgLeft;
+        if (subjectString.equals("语文") || subjectString.equals("数学") || subjectString.equals("英语") || subjectString.equals("物理") || subjectString.equals("化学") || subjectString.equals("生物") || subjectString.equals("历史") || subjectString.equals("政治") || subjectString.equals("地理")){
+            msgLeft = new AskAnswerMsg("请提问", AskAnswerMsg.TYPE_RECEIVE);
+        }
+        else {
+            msgLeft = new AskAnswerMsg("请选择学科", AskAnswerMsg.TYPE_RECEIVE);
+        }
         msgList.add(msgLeft);
+    }
+
+    public void initHead(){
+        mTvAskAnswerSubject.setText(subjectString);
+        switch (subjectString){
+            case "语文":mIvAskAnswerSubject.setImageResource(R.drawable.chinese);
+                break;
+            case "数学":mIvAskAnswerSubject.setImageResource(R.drawable.math);
+                break;
+            case "英语":mIvAskAnswerSubject.setImageResource(R.drawable.english);
+                break;
+            case "生物":mIvAskAnswerSubject.setImageResource(R.drawable.biology);
+                break;
+            case "物理":mIvAskAnswerSubject.setImageResource(R.drawable.physics);
+                break;
+            case "化学":mIvAskAnswerSubject.setImageResource(R.drawable.chemistry);
+                break;
+            case "政治":mIvAskAnswerSubject.setImageResource(R.drawable.politics);
+                break;
+            case "历史":mIvAskAnswerSubject.setImageResource(R.drawable.history);
+                break;
+            case "地理":mIvAskAnswerSubject.setImageResource(R.drawable.geography);
+                break;
+            default:
+                break;
+        }
     }
 
     @Nullable
@@ -103,15 +131,12 @@ public class AskAnswerFragment extends Fragment {
         msgRecyclerView.setLayoutManager(layoutManager);
         adapter = new AskAnswerMsgAdapter(msgList);
         msgRecyclerView.setAdapter(adapter);
+        initHead();
         initMsg();
 
         mBtnAskAnsSubject.setOnClickListener(new View.OnClickListener() {
             final String[] subjects = Consts.getTotal().toArray(new String[0]);
             private final ButtonOnClick buttonOnClick = new ButtonOnClick(1);
-
-            /*public String getAskAnswerSubject(){
-                return subjects[buttonOnClick.index];
-            }*/
 
             @Override
             public void onClick(View v) {
@@ -148,35 +173,15 @@ public class AskAnswerFragment extends Fragment {
                         if (which == DialogInterface.BUTTON_POSITIVE)
                         {
                             subjectString = subjects[buttonOnClick.index];
-                            mTvAskAnswerSubject.setText(subjectString);
-                            switch (subjectString){
-                                case "语文":mIvAskAnswerSubject.setImageResource(R.drawable.chinese);
-                                    break;
-                                case "数学":mIvAskAnswerSubject.setImageResource(R.drawable.math);
-                                    break;
-                                case "英语":mIvAskAnswerSubject.setImageResource(R.drawable.english);
-                                    break;
-                                case "生物":mIvAskAnswerSubject.setImageResource(R.drawable.biology);
-                                    break;
-                                case "物理":mIvAskAnswerSubject.setImageResource(R.drawable.physics);
-                                    break;
-                                case "化学":mIvAskAnswerSubject.setImageResource(R.drawable.chemistry);
-                                    break;
-                                case "政治":mIvAskAnswerSubject.setImageResource(R.drawable.politics);
-                                    break;
-                                case "历史":mIvAskAnswerSubject.setImageResource(R.drawable.history);
-                                    break;
-                                case "地理":mIvAskAnswerSubject.setImageResource(R.drawable.geography);
-                                    break;
-                                default:
-                                    break;
-                            }
+                            initHead();
                             dialog.dismiss();
                         }
                         else if (which == DialogInterface.BUTTON_NEGATIVE)
                         {
                             dialog.dismiss();
                         }
+                        initMsg();
+                        adapter.notifyDataSetChanged();
                     }
                 }
             }
