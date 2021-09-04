@@ -2,6 +2,7 @@ package com.java.xuhaotian.adapter;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,21 +15,24 @@ import com.java.xuhaotian.R;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
-public class EntityListAdapter extends BaseAdapter {
+public class SearchListAdapter extends BaseAdapter {
+
     private ArrayList<HashMap<String, String>> mList;
     private Context mContext;
     private LayoutInflater layoutInflater;
 
-    public EntityListAdapter(Context context, ArrayList<HashMap<String, String>> list){
-        mList = list;
-        mContext = context;
-        layoutInflater = LayoutInflater.from(context);
-    }
-
     public final class Component{
         public ImageView ivImage;
         public TextView tvTitle;
+        public TextView tvCategory;
+    }
+
+    public SearchListAdapter(Context context, ArrayList<HashMap<String, String>> list){
+        mList = list;
+        mContext = context;
+        layoutInflater = LayoutInflater.from(context);
     }
 
     @Override
@@ -51,9 +55,10 @@ public class EntityListAdapter extends BaseAdapter {
         Component component = null;
         if (convertView == null){
             component = new Component();
-            convertView=layoutInflater.inflate(R.layout.listview_entity, null);
+            convertView=layoutInflater.inflate(R.layout.listview_search_result, null);
             component.ivImage = convertView.findViewById(R.id.iv_image);
             component.tvTitle = convertView.findViewById(R.id.tv_title);
+            component.tvCategory = convertView.findViewById(R.id.tv_category);
             convertView.setTag(component);
         }else{
             component = (Component) convertView.getTag();
@@ -90,10 +95,13 @@ public class EntityListAdapter extends BaseAdapter {
                 break;
         }
         component.tvTitle.setText(mList.get(position).get("name"));
+        component.tvCategory.setText(mList.get(position).get("entityType"));
         if (mList.get(position).get("visited") == "yes"){
             component.tvTitle.setTextColor(Color.rgb(168, 168, 168));
+            component.tvCategory.setTextColor(Color.rgb(168, 168, 168));
         }else{
             component.tvTitle.setTextColor(Color.rgb(0, 0, 0));
+            component.tvCategory.setTextColor(Color.rgb(0, 0, 0));
         }
         return convertView;
     }

@@ -25,6 +25,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -64,7 +65,9 @@ public class LoginActivity extends AppCompatActivity {
                     JSONObject json = new JSONObject();
                     json.put("userName", username);
                     json.put("password", password);
-                    OkHttpClient client = new OkHttpClient();
+                    OkHttpClient client = new OkHttpClient.Builder()
+                            .connectTimeout(1, TimeUnit.SECONDS)
+                            .build();
                     RequestBody body = RequestBody.create(String.valueOf(json), JSON);
                     Request request = new Request.Builder()
                             .url(Consts.backendURL + "login")
@@ -89,11 +92,10 @@ public class LoginActivity extends AppCompatActivity {
             }
 
             if (password_correct){
-                Toast.makeText(LoginActivity.this, "登录成功", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(LoginActivity.this, MainPageActivity.class);
                 startActivity(intent);
             }else{
-                Toast.makeText(LoginActivity.this, "密码错误", Toast.LENGTH_SHORT).show();
+                Toast.makeText(LoginActivity.this, "登录失败", Toast.LENGTH_SHORT).show();
             }
         });
 

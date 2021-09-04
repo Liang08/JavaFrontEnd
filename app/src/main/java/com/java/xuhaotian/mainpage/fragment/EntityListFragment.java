@@ -8,6 +8,7 @@ import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -23,6 +24,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.java.xuhaotian.ChannelSelectActivity;
 import com.java.xuhaotian.Consts;
+import com.java.xuhaotian.EntityDetailActivity;
 import com.java.xuhaotian.HttpRequest;
 import com.java.xuhaotian.R;
 import com.java.xuhaotian.SearchActivity;
@@ -32,10 +34,12 @@ import com.java.xuhaotian.adapter.SubjectListAdapter;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map;
 
 public class EntityListFragment extends Fragment {
     private String[] mTitles;
@@ -45,6 +49,7 @@ public class EntityListFragment extends Fragment {
     private Button mBtnSetting;
     private String subject;
     private String error_message;
+    private ArrayList<HashMap<String, String>> stringList;
 
     @Nullable
     @Override
@@ -62,11 +67,12 @@ public class EntityListFragment extends Fragment {
         mRvSubject = view.findViewById(R.id.rv_subject);
         mBtnSetting = view.findViewById(R.id.btn_set);
         setData();
+        setListView(stringList);
+        setSubjectList();
     }
 
     private void setData(){
-        mTitles = new String[]{"语文", "数学", "英语", "物理", "化学", "生物"};
-        ArrayList<String> stringList = new ArrayList<>();
+        stringList = new ArrayList<>();
         error_message = null;
         Log.d("test", "start");
         try {
@@ -78,7 +84,10 @@ public class EntityListFragment extends Fragment {
                 JSONArray jsonArray = new JSONArray(response.string());
                 for (int i = 0; i < jsonArray.length(); i++) {
                     Object obj = jsonArray.get(i);
-                    stringList.add(String.valueOf(obj));
+                    HashMap<String, String> map = new HashMap<>();
+                    map.put("name", String.valueOf(obj));
+                    map.put("visited", "no");
+                    stringList.add(map);
                     Log.d("test", String.valueOf(obj));
                 }
 
@@ -96,8 +105,9 @@ public class EntityListFragment extends Fragment {
             Log.d("test", "fail");
             e.printStackTrace();
         }
+    }
 
-        setListView(stringList);
+    void setSubjectList(){
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
         mRvSubject.setLayoutManager(linearLayoutManager);
@@ -108,6 +118,7 @@ public class EntityListFragment extends Fragment {
             public void onItemClick(View view, int position) {
                 Consts.setSubjectNow(Consts.getSubjectList().get(position));
                 setData();
+                setListView(stringList);
             }
         });
     }
@@ -132,12 +143,27 @@ public class EntityListFragment extends Fragment {
             }
         });
 
+        mLvEntity.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(getContext(), EntityDetailActivity.class);
+                intent.putExtra("course", Consts.getSubjectName(Consts.getSubjectNow()));
+                intent.putExtra("name", stringList.get(position).get("name"));
+                String name = stringList.get(position).get("name");
+                HashMap<String, String> map = new HashMap<>();
+                map.put("name", name);
+                map.put("visited", "yes");
+                stringList.set(position, map);
+                startActivityForResult(intent, 2);
+            }
+        });
 
     }
 
-    public void setListView(ArrayList<String> stringArrayList){
+    public void setListView(ArrayList<HashMap<String, String>> stringArrayList){
         mLvEntity.setAdapter(new EntityListAdapter(getActivity(), stringArrayList));
     }
+
 
 
     @Override
@@ -145,7 +171,8 @@ public class EntityListFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 1){
             Consts.setSubjectNow(Consts.getSubjectList().get(0));
-            setData();
+            setSubjectList();
         }
+        setListView(stringList);
     }
 }

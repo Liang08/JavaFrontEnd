@@ -33,11 +33,35 @@
         android:layout_height="0.5dp"
         android:background="@color/grey"/>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+        <Spinner
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="3"/>
+        <android.widget.Button
+            android:layout_height="match_parent"
+            android:layout_width="0dp"
+            android:text="按相关度排序"
+            android:textSize="9sp"
+            android:layout_weight="1"/>
+        <android.widget.Button
+            android:layout_height="match_parent"
+            android:layout_width="0dp"
+            android:text="按字符排序"
+            android:textSize="9sp"
+            android:layout_weight="1"/>
+    </LinearLayout>
+
     <ListView
         android:id="@+id/lv_result"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"/>
+        android:layout_marginEnd="20dp"
+        android:layout_marginTop="7dp"/>
 
 </LinearLayout>

@@ -6,6 +6,7 @@ import org.json.JSONObject;
 
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -23,13 +24,16 @@ public class HttpRequest {
     public static class MyResponse {
         private final int code;
         private final String string;
+
         public MyResponse(int code, String string) {
             this.code = code;
             this.string = string;
         }
+
         public int code() {
             return code;
         }
+
         public String string() {
             return string;
         }
@@ -40,7 +44,9 @@ public class HttpRequest {
         final Integer[] code = new Integer[1];
         Thread thread = new Thread(() -> {
             try {
-                OkHttpClient client = new OkHttpClient();
+                OkHttpClient client = new OkHttpClient.Builder()
+                        .connectTimeout(2, TimeUnit.SECONDS)
+                        .build();
                 Request request = new Request.Builder()
                         .url(url + getUrl(params))
                         .get()
@@ -71,7 +77,9 @@ public class HttpRequest {
         final Integer[] code = new Integer[1];
         Thread thread = new Thread(() -> {
             try {
-                OkHttpClient client = new OkHttpClient();
+                OkHttpClient client = new OkHttpClient.Builder()
+                        .connectTimeout(2, TimeUnit.SECONDS)
+                        .build();
                 RequestBody body = RequestBody.create(String.valueOf(params), JSON);
                 Request request = new Request.Builder()
                         .url(url)
@@ -103,7 +111,9 @@ public class HttpRequest {
         final Integer[] code = new Integer[1];
         Thread thread = new Thread(() -> {
             try {
-                OkHttpClient client = new OkHttpClient();
+                OkHttpClient client = new OkHttpClient.Builder()
+                        .connectTimeout(2, TimeUnit.SECONDS)
+                        .build();
                 RequestBody body = RequestBody.create(String.valueOf(params), JSON);
                 Request request = new Request.Builder()
                         .url(url)
