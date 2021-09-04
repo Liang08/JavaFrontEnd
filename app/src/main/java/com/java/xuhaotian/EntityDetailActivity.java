@@ -23,6 +23,14 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.util.Pair;
 
+import com.sina.weibo.sdk.api.TextObject;
+import com.sina.weibo.sdk.api.WeiboMultiMessage;
+import com.sina.weibo.sdk.auth.AuthInfo;
+import com.sina.weibo.sdk.common.UiError;
+import com.sina.weibo.sdk.openapi.IWBAPI;
+import com.sina.weibo.sdk.openapi.WBAPIFactory;
+import com.sina.weibo.sdk.share.WbShareCallback;
+
 import org.jetbrains.annotations.Contract;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -44,23 +52,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
-import com.sina.weibo.sdk.api.ImageObject;
-import com.sina.weibo.sdk.api.MultiImageObject;
-import com.sina.weibo.sdk.api.TextObject;
-import com.sina.weibo.sdk.api.VideoSourceObject;
-import com.sina.weibo.sdk.api.WebpageObject;
-import com.sina.weibo.sdk.api.WeiboMultiMessage;
-import com.sina.weibo.sdk.auth.AuthInfo;
-import com.sina.weibo.sdk.common.UiError;
-import com.sina.weibo.sdk.openapi.IWBAPI;
-import com.sina.weibo.sdk.openapi.WBAPIFactory;
-import com.sina.weibo.sdk.share.WbShareCallback;
 
 public class EntityDetailActivity extends AppCompatActivity implements WbShareCallback {
     private static final String TAG = "EntityDetailActivity";
 
     private TextView mTvName;
-    private Button mBtnReturn, mBtnQuiz;
+    private Button mBtnReturn, mBtnQuiz, mBtnSyllabus;
     private Switch mSwitchFavourite;
     TableLayout mTlProperty;
     ExpandableListView mExLvContentList;
@@ -136,6 +133,7 @@ public class EntityDetailActivity extends AppCompatActivity implements WbShareCa
     private void initViews() {
         mBtnReturn = findViewById(R.id.btn_entity_detail_return);
         mBtnQuiz = findViewById(R.id.btn_entity_detail_quiz);
+        mBtnSyllabus = findViewById(R.id.btn_entity_detail_syllabus);
         mTvName = findViewById(R.id.tv_entity_detail_name);
         mTvName.setText(name);
 
@@ -329,6 +327,12 @@ public class EntityDetailActivity extends AppCompatActivity implements WbShareCa
         });
         mBtnQuiz.setOnClickListener(v -> {
             Intent intent = new Intent(EntityDetailActivity.this, QuizActivity.class);
+            intent.putExtra("name", name);
+            startActivity(intent);
+        });
+        mBtnSyllabus.setOnClickListener(v -> {
+            Intent intent = new Intent(EntityDetailActivity.this, SyllabusActivity.class);
+            intent.putExtra("course", course);
             intent.putExtra("name", name);
             startActivity(intent);
         });
