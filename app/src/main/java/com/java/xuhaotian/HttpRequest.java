@@ -8,6 +8,7 @@ import org.json.JSONObject;
 
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
 import okhttp3.OkHttpClient;
@@ -16,7 +17,9 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class HttpRequest {
-    private final static OkHttpClient myClient = new OkHttpClient();
+    private final static OkHttpClient myClient = new OkHttpClient.Builder().
+            callTimeout(10 * 1000, TimeUnit.MILLISECONDS).
+            build();
 
     @NonNull
     private String getUrl(@NonNull Map<String, Object> params) {
@@ -133,7 +136,6 @@ public class HttpRequest {
     }
 
     public Call getRequestCall(String url, Map<String, Object> params) {
-        OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder()
                 .url(url + getUrl(params))
                 .get()
@@ -151,7 +153,6 @@ public class HttpRequest {
     }
 
     public Call postRequestCall(String url, JSONObject params) {
-        OkHttpClient client = new OkHttpClient();
         RequestBody body = RequestBody.create(String.valueOf(params), JSON);
         Request request = new Request.Builder()
                 .url(url)

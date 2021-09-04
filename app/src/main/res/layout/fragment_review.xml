@@ -4,19 +4,31 @@
     android:layout_height="match_parent"
     android:gravity="center"
     android:orientation="vertical">
+
     <TextView
         android:id="@+id/tv_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginHorizontal="10dp"
+        android:gravity="center"
         android:text="Review"
-        android:textSize="30sp"
         android:textColor="@color/black"
-        android:gravity="center"/>
+        android:textSize="30sp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="10dp"
+        android:layout_marginVertical="10dp"
+        android:gravity="center"
+        android:text="【专项测试】与【复习提纲】功能搬家到知识点详情页了，快去看一看吧~"
+        android:textSize="16sp" />
 
     <Button
         android:id="@+id/btn_review_recommend_quiz"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginHorizontal="10dp"
         android:text="推荐试题" />
 
 </LinearLayout>
