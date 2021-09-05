@@ -1,23 +1,38 @@
 package com.java.xuhaotian.mainpage.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.method.Touch;
 import android.util.Log;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.java.xuhaotian.Consts;
+import com.java.xuhaotian.EntityDetailActivity;
+import com.java.xuhaotian.HttpRequest;
 import com.java.xuhaotian.R;
+import com.java.xuhaotian.SearchResultActivity;
+import com.java.xuhaotian.adapter.LinkAdapter;
+import com.java.xuhaotian.adapter.SearchListAdapter;
+import com.java.xuhaotian.user.FavouriteActivity;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -30,6 +45,10 @@ public class LinkPageFragment extends Fragment {
     private TextView mTvTitle;
     private EditText mEtLink;
     private Button mBtnSearch;
+    private String error_message;
+    private ListView mLvResult;
+    private LinkAdapter mAdapter;
+    ArrayList<HashMap<String, String>> searchResult = new ArrayList<>();
 
     @Nullable
     @Override
@@ -45,6 +64,7 @@ public class LinkPageFragment extends Fragment {
         mTvTitle = view.findViewById(R.id.tv_title);
         mBtnSearch = view.findViewById(R.id.btn_search);
         mEtLink = view.findViewById(R.id.et_link);
+        mLvResult = view.findViewById(R.id.lv_list);
     }
 
     @Override
@@ -54,32 +74,58 @@ public class LinkPageFragment extends Fragment {
         mBtnSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                searchResult.clear();
                 String context = mEtLink.getText().toString();
-                Thread thread = new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            JSONObject json = new JSONObject();
-                            json.put("context", context);
-                            json.put("token", Consts.getToken());
-                            OkHttpClient client = new OkHttpClient();
-                            RequestBody body = RequestBody.create(String.valueOf(json), JSON);
-                            Request request = new Request.Builder()
-                                    .url(Consts.backendURL + "linkInstance")
-                                    .post(body)
-                                    .build();
-                            Response response = client.newCall(request).execute();
-                            if (response.code() == 200){
-                                Log.d("test", "--sending success---");
-                            }else{
-                                Log.d("test", "--sending fail:" + response.code() + "---");
-                            }
-                        }catch (Exception e){
-                            e.printStackTrace();
+                try {
+                    JSONObject json = new JSONObject();
+                    json.put("token", Consts.getToken());
+                    json.put("context", context);
+                    HttpRequest.MyResponse response = new HttpRequest().postRequest(Consts.backendURL + "linkInstance", json);
+                    if (response.code() == 200) {
+                        JSONArray jsonArray = new JSONArray(response.string());
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            JSONObject obj = jsonArray.getJSONObject(i);
+                            String entityType = obj.getString("entity_type");
+                            String name = obj.getString("entity");
+                            String course = obj.getString("entity_course");
+                            Log.d("test", course + entityType + ": " + name);
+                            HashMap<String, String> map = new HashMap<>();
+                            map.put("name", name);
+                            map.put("course", course);
+                            map.put("entityType", entityType);
+                            searchResult.add(map);
                         }
                     }
-                });
+                    else if (response.code() == 401) {
+                        Log.d("test", "401");
+                        JSONObject obj = new JSONObject(response.string());
+                        error_message = obj.getString("message") + "";
+                    }
+                    else {
+                        Log.d("test", String.valueOf(response.code()));
+                        error_message = "请求失败(" + response.code() + ")";
+                    }
+                } catch (Exception e) {
+                    Log.d("test", "fail");
+                    e.printStackTrace();
+                }
+                mAdapter = new LinkAdapter(getActivity(), searchResult);
+                mLvResult.setAdapter(mAdapter);
             }
         });
+        mLvResult.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(getContext(), EntityDetailActivity.class);
+                intent.putExtra("course", searchResult.get(position).get("course"));
+                intent.putExtra("name", searchResult.get(position).get("name"));
+                startActivityForResult(intent, 1);
+            }
+        });
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
     }
 }

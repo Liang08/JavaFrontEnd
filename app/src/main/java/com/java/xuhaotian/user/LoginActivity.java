@@ -20,6 +20,7 @@ import com.java.xuhaotian.mainpage.MainPageActivity;
 import org.json.JSONObject;
 
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -57,7 +58,9 @@ public class LoginActivity extends AppCompatActivity {
                     JSONObject json = new JSONObject();
                     json.put("userName", username);
                     json.put("password", MD5.md5(password));
-                    OkHttpClient client = new OkHttpClient();
+                    OkHttpClient client = new OkHttpClient.Builder()
+                            .connectTimeout(1, TimeUnit.SECONDS)
+                            .build();
                     RequestBody body = RequestBody.create(String.valueOf(json), JSON);
                     Request request = new Request.Builder()
                             .url(Consts.backendURL + "login")
@@ -85,8 +88,9 @@ public class LoginActivity extends AppCompatActivity {
                 Toast.makeText(LoginActivity.this, "登录成功", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(LoginActivity.this, MainPageActivity.class);
                 startActivity(intent);
-            } else {
-                Toast.makeText(LoginActivity.this, "密码错误", Toast.LENGTH_SHORT).show();
+
+            }else{
+                Toast.makeText(LoginActivity.this, "登录失败", Toast.LENGTH_SHORT).show();
             }
         });
 

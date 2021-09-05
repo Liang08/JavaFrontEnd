@@ -11,7 +11,8 @@ import java.util.HashMap;
 import okhttp3.MediaType;
 
 public class Consts {
-    public static final String backendURL = "http://183.172.73.24:8080/";
+
+    public static final String backendURL = "http://183.172.50.43:8080/";
 
     public static final MediaType JSON = MediaType.get("application/json; charset=utf-8");
     private static String token;
@@ -56,6 +57,31 @@ public class Consts {
                 return "geo";
             case "历史":
                 return "history";
+            default:
+                return "";
+        }
+    }
+
+    public static String getSubjectChineseName(String subject){
+        switch (subject) {
+            case "chinese":
+                return "语文";
+            case "math":
+                return "数学";
+            case "english":
+                return "英语";
+            case "physics":
+                return "物理";
+            case "chemistry":
+                return "化学";
+            case "biology":
+                return "生物";
+            case "politics":
+                return "政治";
+            case "geo":
+                return "地理";
+            case "history":
+                return "历史";
             default:
                 return "";
         }

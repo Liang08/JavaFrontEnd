@@ -34,7 +34,7 @@
             android:textSize="20sp"/>
     </LinearLayout>
     <ListView
-        android:id="@+id/iv_list"
+        android:id="@+id/lv_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"/>
