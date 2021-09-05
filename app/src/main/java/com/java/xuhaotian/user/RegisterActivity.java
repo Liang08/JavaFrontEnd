@@ -106,7 +106,7 @@ public class RegisterActivity extends AppCompatActivity {
                 Intent intent = new Intent(RegisterActivity.this, MainPageActivity.class);
                 startActivity(intent);
             } else {
-                Toast.makeText(RegisterActivity.this, "密码错误", Toast.LENGTH_SHORT).show();
+                Toast.makeText(RegisterActivity.this, "注册失败", Toast.LENGTH_SHORT).show();
             }
         });
     }

@@ -13,16 +13,15 @@
         android:layout_height="wrap_content"
         android:layout_weight="0"
         android:contentDescription="图标"
-        android:maxWidth="48dp"
-        android:maxHeight="48dp"
-        android:minWidth="48dp"
-        android:minHeight="48dp"
+        android:maxWidth="40dp"
+        android:maxHeight="40dp"
+        android:minWidth="40dp"
+        android:minHeight="40dp"
         android:padding="2dp"
         android:paddingLeft="2dp"
         android:paddingTop="2dp"
         android:paddingRight="2dp"
-        android:paddingBottom="2dp"
-        app:srcCompat="@drawable/math" />
+        android:paddingBottom="2dp"/>
 
     <TextView
         android:id="@+id/tv_history_list_item_name"
@@ -32,7 +31,8 @@
         android:height="48dp"
         android:maxWidth="300dp"
         android:text="实体名称"
-        android:textSize="24sp" />
+        android:textSize="24sp"
+        android:layout_marginStart="10dp"/>
 
     <Space
         android:layout_width="wrap_content"
