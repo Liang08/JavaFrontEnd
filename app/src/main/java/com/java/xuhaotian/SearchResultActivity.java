@@ -10,8 +10,10 @@ import android.util.Log;
 import android.util.Pair;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -41,8 +43,12 @@ public class SearchResultActivity extends AppCompatActivity {
     private String error_message;
     private String searchKey;
     private SearchListAdapter mAdapter;
+    private Spinner mSpSelect;
     private ListView mLvResult;
     private String course;
+    private String[] label;
+    private String searchLabel;
+    private ArrayList<String> labelArray;
     ArrayList<HashMap<String, String>> searchResult;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,13 +68,51 @@ public class SearchResultActivity extends AppCompatActivity {
         mLvResult = findViewById(R.id.lv_result);
         mIbReturn = findViewById(R.id.ib_return);
         mTvTitle = findViewById(R.id.tv_title);
+        mSpSelect = findViewById(R.id.sp_select);
         mTvTitle.setText("在 " + course + " 中搜索 \'" + keyword + "\' 结果");
         initList();
+        initSpinner();
     }
 
     void initList(){
         mAdapter = new SearchListAdapter(SearchResultActivity.this, searchResult);
         mLvResult.setAdapter(mAdapter);
+    }
+
+    void initSpinner(){
+        labelArray = new ArrayList<>();
+        try {
+            HashMap<String, Object> params = new HashMap<>();
+            params.put("token", Consts.getToken());
+            params.put("subject", Consts.getSubjectName(course));
+            HttpRequest.MyResponse response = new HttpRequest().getRequest(Consts.backendURL + "getHotLabel", params);
+            if (response.code() == 200) {
+                JSONArray jsonArray = new JSONArray(response.string());
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    Object obj = jsonArray.get(i);
+                    labelArray.add(String.valueOf(obj));
+                    Log.d("test", String.valueOf(obj));
+                }
+                int n = labelArray.size();
+                label = new String[n + 1];
+                label[0] = "全部";
+                for (int i = 0; i < n; i ++){
+                    label[i + 1] = labelArray.get(i);
+                }
+                ArrayAdapter<String> adapter=new ArrayAdapter<String>(this,android.R.layout.simple_dropdown_item_1line,android.R.id.text1,label);
+                mSpSelect.setAdapter(adapter);
+            } else if (response.code() == 401) {
+                Log.d("test", "401");
+                JSONObject obj = new JSONObject(response.string());
+                error_message = obj.getString("message") + "";
+            } else {
+                Log.d("test", String.valueOf(response.code()));
+                error_message = "请求失败(" + response.code() + ")";
+            }
+        } catch (Exception e) {
+            Log.d("test", "fail");
+            e.printStackTrace();
+        }
     }
 
     void initEvent() {
@@ -93,12 +137,26 @@ public class SearchResultActivity extends AppCompatActivity {
                 startActivityForResult(intent, 2);
             }
         });
+
+        mSpSelect.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                searchLabel = label[position];
+                getData();
+                initList();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
     }
 
     @NonNull
     @Contract(pure = true)
     private String getFileName() {
-        return course + "_xht_" + searchKey + ".instance";
+        return course + "_xht_" + searchKey + searchLabel + ".instance";
     }
 
     private void saveInstance(JSONArray property){
@@ -157,10 +215,12 @@ public class SearchResultActivity extends AppCompatActivity {
                     JSONObject obj = property[0].getJSONObject(i);
                     String entityType = obj.getString("category");
                     String name = obj.getString("label");
+                    String relevancy = obj.getString("relevancy");
                     HashMap<String, String> map = new HashMap<>();
                     map.put("name", name);
                     map.put("visited", "no");
                     map.put("entityType", entityType);
+                    map.put("relevancy", relevancy);
                     searchResult.add(map);
                     Log.d("test", String.valueOf(obj));
                 } catch (JSONException e) {
@@ -168,6 +228,7 @@ public class SearchResultActivity extends AppCompatActivity {
                 }
             }
             Log.d("test", "read cache");
+            Log.d("test", property[0].toString());
         }
         else {
             try {
@@ -175,7 +236,10 @@ public class SearchResultActivity extends AppCompatActivity {
                 params.put("token", Consts.getToken());
                 params.put("course", Consts.getSubjectName(course));
                 params.put("searchKey", searchKey);
-                params.put("limit", 2147483647);
+                params.put("limit", 100000);
+                if (!searchLabel.equals("全部")){
+                    params.put("label", searchLabel);
+                }
                 HttpRequest.MyResponse response = new HttpRequest().getRequest(Consts.backendURL + "getInstanceList", params);
                 if (response.code() == 200) {
                     JSONArray jsonArray = new JSONArray(response.string());
