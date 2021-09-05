@@ -5,12 +5,14 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.Pair;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Spinner;
@@ -33,8 +35,11 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 public class SearchResultActivity extends AppCompatActivity {
 
@@ -43,6 +48,7 @@ public class SearchResultActivity extends AppCompatActivity {
     private String error_message;
     private String searchKey;
     private SearchListAdapter mAdapter;
+    private Button mBtnSort01, mBtnSort02;
     private Spinner mSpSelect;
     private ListView mLvResult;
     private String course;
@@ -70,6 +76,8 @@ public class SearchResultActivity extends AppCompatActivity {
         mTvTitle = findViewById(R.id.tv_title);
         mSpSelect = findViewById(R.id.sp_select);
         mTvTitle.setText("在 " + course + " 中搜索 \'" + keyword + "\' 结果");
+        mBtnSort01 = findViewById(R.id.btn_sort1);
+        mBtnSort02 = findViewById(R.id.btn_sort2);
         initList();
         initSpinner();
     }
@@ -149,6 +157,45 @@ public class SearchResultActivity extends AppCompatActivity {
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
 
+            }
+        });
+
+        mBtnSort01.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                searchResult.sort(new Comparator<HashMap<String, String>>() {
+                    @Override
+                    public int compare(HashMap<String, String> o1, HashMap<String, String> o2) {
+                        if (Objects.requireNonNull(o1.get("name")).compareTo(Objects.requireNonNull(o2.get("name"))) > 0) {
+                            return 1;
+                        } else {
+                            return -1;
+                        }
+                    }
+                });
+                Log.d("test", searchResult.toString());
+                initList();
+                mBtnSort01.setTextColor(Color.rgb(255, 0, 0));
+                mBtnSort02.setTextColor(Color.rgb(0, 0, 0));
+            }
+        });
+
+        mBtnSort02.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Collections.sort(searchResult, new Comparator<HashMap<String, String>>() {
+                    @Override
+                    public int compare(HashMap<String, String> o1, HashMap<String, String> o2) {
+                        if (Integer.parseInt(Objects.requireNonNull(o1.get("relevancy"))) > Integer.parseInt(Objects.requireNonNull(o2.get("relevancy")))){
+                            return -1;
+                        }else{
+                            return 1;
+                        }
+                    }
+                });
+                initList();
+                mBtnSort02.setTextColor(Color.rgb(255, 0, 0));
+                mBtnSort01.setTextColor(Color.rgb(0, 0, 0));
             }
         });
     }
@@ -272,7 +319,7 @@ public class SearchResultActivity extends AppCompatActivity {
     }
 
     int compare(HashMap<String, String> hashMap1, HashMap<String, String> hashMap2){
-        if (hashMap1.get("name").compareTo(hashMap2.get("name")) > 0){
+        if (Objects.requireNonNull(hashMap1.get("name")).compareTo(Objects.requireNonNull(hashMap2.get("name"))) > 0){
             return 1;
         }else{
             return -1;
