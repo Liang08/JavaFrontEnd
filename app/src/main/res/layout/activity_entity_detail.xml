@@ -24,7 +24,8 @@
             android:maxWidth="280dp"
             android:singleLine="false"
             android:text="社会主义（政治）"
-            android:textSize="34sp" />
+            android:textSize="34sp"
+            tools:ignore="TouchTargetSizeCheck" />
 
         <Space
             android:layout_width="wrap_content"
@@ -55,7 +56,8 @@
                 android:showText="true"
                 android:splitTrack="false"
                 android:text="收藏"
-                android:textSize="16sp" />
+                android:textSize="16sp"
+                tools:ignore="TouchTargetSizeCheck" />
 
         </LinearLayout>
 
@@ -85,6 +87,18 @@
                 android:layout_height="wrap_content"
                 android:text="复习提纲"
                 android:textSize="20sp" />
+
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:id="@+id/ll_entity_detail_image_list"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:orientation="horizontal" />
+            </HorizontalScrollView>
 
             <TextView
                 android:layout_width="match_parent"

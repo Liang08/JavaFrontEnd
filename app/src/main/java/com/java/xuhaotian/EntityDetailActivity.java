@@ -11,6 +11,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ExpandableListView;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.TableLayout;
@@ -23,6 +25,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.util.Pair;
 
+import com.bumptech.glide.Glide;
 import com.sina.weibo.sdk.api.TextObject;
 import com.sina.weibo.sdk.api.WeiboMultiMessage;
 import com.sina.weibo.sdk.auth.AuthInfo;
@@ -59,6 +62,7 @@ public class EntityDetailActivity extends AppCompatActivity implements WbShareCa
     private TextView mTvName;
     private Button mBtnReturn, mBtnQuiz, mBtnSyllabus;
     private Switch mSwitchFavourite;
+    LinearLayout mLlImageList;
     TableLayout mTlProperty;
     ExpandableListView mExLvContentList;
     ListView mLvQuestionList;
@@ -139,6 +143,8 @@ public class EntityDetailActivity extends AppCompatActivity implements WbShareCa
 
         mSwitchFavourite = findViewById(R.id.switch_entity_detail_favourite);
         mSwitchFavourite.setEnabled(false);
+
+        mLlImageList = findViewById(R.id.ll_entity_detail_image_list);
         mTlProperty = findViewById(R.id.tl_entity_detail_property);
         mExLvContentList = findViewById(R.id.exLv_entity_detail_content_list);
         mLvQuestionList = findViewById(R.id.lv_entity_detail_question_list);
@@ -286,6 +292,21 @@ public class EntityDetailActivity extends AppCompatActivity implements WbShareCa
         setHeight(mLvQuestionList, mQuestionHeight);
     }
 
+    private void initImage(@NonNull JSONArray image) {
+        float dip = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1, getResources().getDisplayMetrics());
+        for (int i = 0; i < image.length(); i++) {
+            try {
+                String url = image.getString(i);
+                ImageView imageView = new ImageView(this);
+                Glide.with(this).load(url)
+                        .override((int)(300 * dip), (int)(300 * dip)).centerInside().into(imageView);
+                mLlImageList.addView(imageView);
+            } catch (JSONException e) {
+                Log.d(TAG, Log.getStackTraceString(e));
+            }
+        }
+    }
+
     private void initEvents() {
         mTvName.setOnLongClickListener(v -> {
             // Toast.makeText(EntityDetailActivity.this, "分享:" + name, Toast.LENGTH_SHORT).show();
@@ -357,7 +378,7 @@ public class EntityDetailActivity extends AppCompatActivity implements WbShareCa
         return course + "_xht_" + name + ".instance";
     }
 
-    private void saveInstance(JSONArray property, JSONArray content, JSONArray question) {
+    private void saveInstance(JSONArray property, JSONArray content, JSONArray question, JSONArray image) {
         File file = new File(getCacheDir(), getFileName());
         ObjectOutputStream oos = null;
         try {
@@ -368,6 +389,7 @@ public class EntityDetailActivity extends AppCompatActivity implements WbShareCa
             oos.writeObject(property.toString());
             oos.writeObject(content.toString());
             oos.writeObject(question.toString());
+            oos.writeObject(image.toString());
             oos.close();
         } catch (IOException e) {
             Log.d(TAG, Log.getStackTraceString(e));
@@ -382,7 +404,7 @@ public class EntityDetailActivity extends AppCompatActivity implements WbShareCa
         }
     }
 
-    private boolean readInstance(JSONArray[] property, JSONArray[] content, JSONArray[] question) {
+    private boolean readInstance(JSONArray[] property, JSONArray[] content, JSONArray[] question, JSONArray[] image) {
         File file = new File(getCacheDir(), getFileName());
         ObjectInputStream ois = null;
         boolean ok = true;
@@ -391,6 +413,7 @@ public class EntityDetailActivity extends AppCompatActivity implements WbShareCa
             property[0] = new JSONArray((String)ois.readObject());
             content[0] = new JSONArray((String)ois.readObject());
             question[0] = new JSONArray((String)ois.readObject());
+            image[0] = new JSONArray((String)ois.readObject());
             ois.close();
         } catch (Throwable e) {
             ok = false;
@@ -410,10 +433,12 @@ public class EntityDetailActivity extends AppCompatActivity implements WbShareCa
         final JSONArray[] property = new JSONArray[1];
         final JSONArray[] content = new JSONArray[1];
         final JSONArray[] question = new JSONArray[1];
-        if (readInstance(property, content, question)) {
+        final JSONArray[] image = new JSONArray[1];
+        if (readInstance(property, content, question, image)) {
             initProperty(property[0]);
             initContent(content[0]);
             initQuestion(question[0]);
+            initImage(image[0]);
             initIsFavourite();
             postHistory(course, name);
         }
@@ -438,11 +463,13 @@ public class EntityDetailActivity extends AppCompatActivity implements WbShareCa
                             JSONObject jsonObject = new JSONObject(Objects.requireNonNull(response.body()).string());
                             property[0] = jsonObject.getJSONArray("property");
                             content[0] = jsonObject.getJSONArray("content");
+                            image[0] = jsonObject.getJSONArray("image");
                             flag.addAndGet(1);
                             boolean isFavourite = jsonObject.getBoolean("isFavourite");
                             new Handler(Looper.getMainLooper()).post(() -> {
                                 initProperty(property[0]);
                                 initContent(content[0]);
+                                initImage(image[0]);
                                 setSwitchFavourite(isFavourite);
                             });
                         } catch (NullPointerException | JSONException e) {
@@ -484,7 +511,7 @@ public class EntityDetailActivity extends AppCompatActivity implements WbShareCa
             Thread thread = new Thread(() -> {
                 while (!isDestroyed()) {
                     if (flag.get() == 3) {
-                        saveInstance(property[0], content[0], question[0]);
+                        saveInstance(property[0], content[0], question[0], image[0]);
                         break;
                     }
                 }
