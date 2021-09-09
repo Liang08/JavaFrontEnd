@@ -294,10 +294,12 @@ public class SearchResultActivity extends AppCompatActivity {
                         JSONObject obj = jsonArray.getJSONObject(i);
                         String entityType = obj.getString("category");
                         String name = obj.getString("label");
+                        String relevancy = obj.getString("relevancy");
                         HashMap<String, String> map = new HashMap<>();
                         map.put("name", name);
                         map.put("visited", "no");
                         map.put("entityType", entityType);
+                        map.put("relevancy", relevancy);
                         searchResult.add(map);
                         Log.d("test", String.valueOf(obj));
                     }
