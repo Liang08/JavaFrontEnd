@@ -137,7 +137,7 @@ public class SearchResultActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(SearchResultActivity.this, EntityDetailActivity.class);
-                intent.putExtra("course", course);
+                intent.putExtra("course", Consts.getSubjectName(course));
                 intent.putExtra("name", searchResult.get(position).get("name"));
                 HashMap<String, String> map = searchResult.get(position);
                 map.put("visited", "yes");
