@@ -2,12 +2,18 @@ package com.java.xuhaotian.mainpage.fragment;
 
 import static com.java.xuhaotian.Consts.JSON;
 import static com.java.xuhaotian.Consts.getSubjectName;
+import static com.java.xuhaotian.R.string.ask_answer_fragment_sou1suo3shi2ti3;
+import static com.java.xuhaotian.R.string.ask_answer_fragment_xiang1guan1lian4jie1;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.style.ClickableSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,14 +26,16 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.java.xuhaotian.Consts;
+import com.java.xuhaotian.LinkSearchActivity;
 import com.java.xuhaotian.R;
+import com.java.xuhaotian.SearchResultActivity;
 import com.java.xuhaotian.adapter.AskAnswerMsgAdapter;
 import com.java.xuhaotian.AskAnswerMsg;
-import com.java.xuhaotian.mainpage.MainPageActivity;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -50,32 +58,68 @@ public class AskAnswerFragment extends Fragment {
     private Button mBtnAskAns;
     private Button mBtnAskAnsDel;
     private Button mBtnAskAnsSubject;
-    private static final int RECEIVE = 1;
-    private String ask,subjectString = "";
+    private static final int RECEIVE = 1, NANS = 0;
+    private String ask,ans0,subjectString = "";
+    private SpannableString ans,string2;
+
 
     Handler handler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
-            if (msg.what == RECEIVE){
-                AskAnswerMsg msgLeft=new AskAnswerMsg(ask,AskAnswerMsg.TYPE_RECEIVE);
-                Log.d("test", "--sending:" + ask + "---");
+            AskAnswerMsg msgLeft;
+            if (msg.what == RECEIVE) {
+                msgLeft = new AskAnswerMsg(ans, AskAnswerMsg.TYPE_RECEIVE);
+                Log.d("test", "--sending:" + ans + "---");
                 msgList.add(msgLeft);
-                adapter.notifyItemChanged(msgList.size()-1);
-                msgRecyclerView.scrollToPosition(msgList.size()-1);
+                adapter.notifyItemChanged(msgList.size() - 1);
+                msgRecyclerView.scrollToPosition(msgList.size() - 1);
+            } else if (msg.what == NANS) {
+                string2 = new SpannableString("此问题没有找到答案！可以尝试\n搜索“" + ask + getString(ask_answer_fragment_xiang1guan1lian4jie1) + getString(ask_answer_fragment_sou1suo3shi2ti3) + ask);
+                string2.setSpan(new ClickableSpan() {
+                    @Override
+                    public void onClick(@NonNull View widget) {
+                        Bundle bundle = new Bundle();
+                        bundle.putString("context", ask);
+                        Intent intent = new Intent(getActivity(), LinkSearchActivity.class);
+                        intent.putExtras(bundle);
+                        startActivityForResult(intent, 0);
+                    }
+                },
+                        string2.length()-ask.length() * 2-getString(ask_answer_fragment_sou1suo3shi2ti3).length()-getString(ask_answer_fragment_xiang1guan1lian4jie1).length()-3,
+                        string2.length()-ask.length()-getString(ask_answer_fragment_sou1suo3shi2ti3).length()-1,
+                        Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                string2.setSpan(new ClickableSpan() {
+                    @Override
+                    public void onClick(@NonNull View widget) {
+                        Bundle bundle = new Bundle();
+                        bundle.putString("searchKey", ask);
+                        bundle.putString("course", subjectString);
+                        Intent intent = new Intent(getActivity(), SearchResultActivity.class);
+                        intent.putExtras(bundle);
+                        startActivityForResult(intent, 1);
+                    }
+                }, string2.length()-ask.length()-getString(ask_answer_fragment_sou1suo3shi2ti3).length(), string2.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                msgLeft = new AskAnswerMsg(string2, AskAnswerMsg.TYPE_RECEIVE);
+                Log.d("test", "--sending:" + ans + "NANS---");
+                msgList.add(msgLeft);
+                adapter.notifyItemChanged(msgList.size() - 1);
+                msgRecyclerView.scrollToPosition(msgList.size() - 1);
             }
             return false;
         }
-    }) ;
+    });
 
     public void initMsg() {
         AskAnswerMsg msgLeft;
         if (subjectString.equals("语文") || subjectString.equals("数学") || subjectString.equals("英语") || subjectString.equals("物理") || subjectString.equals("化学") || subjectString.equals("生物") || subjectString.equals("历史") || subjectString.equals("政治") || subjectString.equals("地理")){
-            msgLeft = new AskAnswerMsg("请提问", AskAnswerMsg.TYPE_RECEIVE);
+            msgLeft = new AskAnswerMsg(new SpannableString("请提问"), AskAnswerMsg.TYPE_RECEIVE);
         }
         else {
-            msgLeft = new AskAnswerMsg("请选择学科", AskAnswerMsg.TYPE_RECEIVE);
+            msgLeft = new AskAnswerMsg(new SpannableString("请选择学科"), AskAnswerMsg.TYPE_RECEIVE);
         }
         msgList.add(msgLeft);
+        adapter.notifyItemChanged(msgList.size() - 1);
+        msgRecyclerView.scrollToPosition(msgList.size() - 1);
     }
 
     public void initHead(){
@@ -107,6 +151,7 @@ public class AskAnswerFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+
         View view = inflater.inflate(R.layout.fragment_ask_answer, container, false);
         Log.d("AskAns", "---create Ask Answer---");
         return view;
@@ -115,6 +160,7 @@ public class AskAnswerFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
         msgRecyclerView=view.findViewById(R.id.messages_view);
         mEtAskMsg = view.findViewById(R.id.et_AskMsg);
         mBtnAskAns = view.findViewById(R.id.btn_AskAns);
@@ -192,7 +238,7 @@ public class AskAnswerFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 ask = mEtAskMsg.getText().toString();
-                AskAnswerMsg msgRight=new AskAnswerMsg(ask,AskAnswerMsg.TYPE_SEND);
+                AskAnswerMsg msgRight=new AskAnswerMsg(new SpannableString(ask),AskAnswerMsg.TYPE_SEND);
                 msgList.add(msgRight);
                 adapter.notifyItemChanged(msgList.size()-1);
                 msgRecyclerView.scrollToPosition(msgList.size()-1);
@@ -218,15 +264,16 @@ public class AskAnswerFragment extends Fragment {
                                 if (response.code() == 200) {
                                     Log.d("test", "--sending success---");
                                     JSONArray ansJSON = new JSONArray(response.body().string());
-                                    ask = ansJSON.getJSONObject(0).getString("value");
-                                    if (ask.equals("") ){ask = ansJSON.getJSONObject(0).getString("message");}
+                                    ans0 = ansJSON.getJSONObject(0).getString("value");
+                                    //if (ans0.equals("") ){ans0 = ansJSON.getJSONObject(0).getString("message");}
                                 } else {
-                                    ask = getString(R.string.connectError);
+                                    ans0 = "";
                                     Log.d("test", "--sending fail:" + response.code() + "---");
                                 }
-
+                                ans = new SpannableString(ans0);
                                 Message msg2 = new Message();
-                                msg2.what = RECEIVE;
+                                msg2.what = (ans0.equals("此问题没有找到答案！") || ans0.equals(""))?NANS:RECEIVE;
+                                Log.d("test", "--sending type:" + msg2.what + "---");
                                 handler.sendMessage(msg2);
                             }
                         }catch (Exception e){
@@ -249,6 +296,8 @@ public class AskAnswerFragment extends Fragment {
                                              public void onClick(View v) {
                                                  msgList.clear();
                                                  adapter.notifyDataSetChanged();
+                                                 initMsg();
+                                                 msgRecyclerView.scrollToPosition(msgList.size()-1);
                                              }
                                          }
 

@@ -1,5 +1,6 @@
 package com.java.xuhaotian.adapter;
 
+import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -53,6 +54,7 @@ public class AskAnswerMsgAdapter extends RecyclerView.Adapter<AskAnswerMsgAdapte
         if(msg.getType() == AskAnswerMsg.TYPE_RECEIVE){
             holder.MsgRight.setVisibility(View.GONE);
             holder.MsgLeft.setVisibility(View.VISIBLE);
+            holder.tvMsgLeft.setMovementMethod(LinkMovementMethod.getInstance());
             holder.tvMsgLeft.setText(msg.getContent());
         }else if(msg.getType() == AskAnswerMsg.TYPE_SEND){
             holder.MsgLeft.setVisibility(View.GONE);

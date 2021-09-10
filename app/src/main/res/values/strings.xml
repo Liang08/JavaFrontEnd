@@ -12,4 +12,15 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="connectError">连接问题</string>
+    <string name="ask_answer_fragment_sou1suo3shi2ti3">搜索实体：</string>
+    <string name="ask_answer_fragment_xiang1guan1lian4jie1">”相关链接\n</string>
+    <string name="title_activity_link_search">LinkSearchActivity</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+
+    <string name="hello_first_fragment">Hello first fragment</string>
+    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
 </resources>
