@@ -22,7 +22,7 @@
         android:paddingTop="2dp"
         android:paddingRight="2dp"
         android:paddingBottom="2dp"
-        app:srcCompat="@drawable/math" />
+        android:layout_marginEnd="5dp"/>
 
     <TextView
         android:id="@+id/tv_favourite_list_item_name"

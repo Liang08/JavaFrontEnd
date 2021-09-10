@@ -2,6 +2,7 @@ package com.java.xuhaotian.adapter;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,7 @@ import com.java.xuhaotian.R;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Random;
 
 public class EntityListAdapter extends BaseAdapter {
     private ArrayList<HashMap<String, String>> mList;
@@ -51,44 +53,23 @@ public class EntityListAdapter extends BaseAdapter {
         Component component = null;
         if (convertView == null){
             component = new Component();
-            convertView=layoutInflater.inflate(R.layout.listview_entity, null);
+            Random r = new Random();
+            int ran1 = r.nextInt(2);
+            if (ran1 == 1){
+                convertView=layoutInflater.inflate(R.layout.listview_entity, null);
+            }else{
+                convertView=layoutInflater.inflate(R.layout.listview_entity2, null);
+            }
+
+
             component.ivImage = convertView.findViewById(R.id.iv_image);
             component.tvTitle = convertView.findViewById(R.id.tv_title);
             convertView.setTag(component);
         }else{
             component = (Component) convertView.getTag();
         }
-        switch (Consts.getSubjectNow()){
-            case "语文":
-                component.ivImage.setImageResource(R.drawable.chinese);
-                break;
-            case "数学":
-                component.ivImage.setImageResource(R.drawable.math);
-                break;
-            case "英语":
-                component.ivImage.setImageResource(R.drawable.english);
-                break;
-            case "生物":
-                component.ivImage.setImageResource(R.drawable.biology);
-                break;
-            case "物理":
-                component.ivImage.setImageResource(R.drawable.physics);
-                break;
-            case "化学":
-                component.ivImage.setImageResource(R.drawable.chemistry);
-                break;
-            case "政治":
-                component.ivImage.setImageResource(R.drawable.politics);
-                break;
-            case "历史":
-                component.ivImage.setImageResource(R.drawable.history);
-                break;
-            case "地理":
-                component.ivImage.setImageResource(R.drawable.geography);
-                break;
-            default:
-                break;
-        }
+
+        component.ivImage.setImageResource(Consts.getSubjectIconResId(Consts.getSubjectName(Consts.getSubjectNow())));
         component.tvTitle.setText(mList.get(position).get("name"));
         if (mList.get(position).get("visited") == "yes"){
             component.tvTitle.setTextColor(Color.rgb(168, 168, 168));

@@ -32,6 +32,7 @@ import com.java.xuhaotian.mainpage.MainPageActivity;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import okhttp3.OkHttpClient;

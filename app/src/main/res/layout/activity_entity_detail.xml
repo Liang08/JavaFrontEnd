@@ -25,7 +25,8 @@
             android:singleLine="false"
             android:text="社会主义（政治）"
             android:textSize="34sp"
-            tools:ignore="TouchTargetSizeCheck" />
+            tools:ignore="TouchTargetSizeCheck"
+            android:textColor="@color/black"/>
 
         <Space
             android:layout_width="wrap_content"
@@ -40,12 +41,14 @@
             android:layout_weight="0"
             android:orientation="vertical">
 
-            <Button
+            <android.widget.Button
                 android:id="@+id/btn_entity_detail_return"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="0"
-                android:text="返回" />
+                android:text="返回"
+                android:textColor="@color/white"
+                android:background="@drawable/bg_btn_login"/>
 
             <Switch
                 android:id="@+id/switch_entity_detail_favourite"
@@ -57,36 +60,51 @@
                 android:splitTrack="false"
                 android:text="收藏"
                 android:textSize="16sp"
-                tools:ignore="TouchTargetSizeCheck" />
+                tools:ignore="TouchTargetSizeCheck"
+                android:textOn=""
+                android:textOff=""/>
 
         </LinearLayout>
 
     </LinearLayout>
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/grey"
+        android:layout_marginBottom="5dp"/>
+
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginHorizontal="3dp"
-        android:fillViewport="true">
+        android:fillViewport="true"
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="12dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <Button
+            <android.widget.Button
                 android:id="@+id/btn_entity_detail_quiz"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="专项测试"
-                android:textSize="20sp" />
+                android:textSize="18sp"
+                android:textColor="@color/white"
+                android:background="@drawable/bg_btn_login"
+                android:layout_marginBottom="5dp"/>
 
-            <Button
+            <android.widget.Button
                 android:id="@+id/btn_entity_detail_syllabus"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="复习提纲"
-                android:textSize="20sp" />
+                android:textColor="@color/white"
+                android:textSize="20sp"
+                android:background="@drawable/bg_btn_login"/>
 
             <HorizontalScrollView
                 android:layout_width="match_parent"

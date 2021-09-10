@@ -14,7 +14,7 @@
     <EditText
         android:id="@+id/et_link"
         android:layout_width="match_parent"
-        android:layout_height="300dp"
+        android:layout_height="260dp"
         android:background="@drawable/bg_username"
         android:layout_margin="20dp"
         android:hint="请输入待查询文本"

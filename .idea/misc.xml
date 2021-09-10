@@ -3,6 +3,7 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="../../../../../../../../layout/custom_preview.xml" value="0.3851851851851852" />
         <entry key="..\:/JavaFrontEnd/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.14583333333333334" />
         <entry key="..\:/JavaFrontEnd/app/src/main/res/drawable/bg_btn_login.xml" value="0.26979166666666665" />
         <entry key="..\:/JavaFrontEnd/app/src/main/res/drawable/bg_btn_search.xml" value="0.14583333333333334" />
@@ -45,19 +46,32 @@
         <entry key="..\:/JavaFrontEnd/app/src/main/res/layout/tab_button.xml" value="0.25364583333333335" />
         <entry key="..\:/JavaFrontEnd/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.26979166666666665" />
         <entry key="..\:/JavaFrontEnd/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.26979166666666665" />
-        <entry key="..\:/xht13127/AndroidStudioProjects/JavaFrontEnd/app/src/main/res/layout/activity_entity_detail.xml" value="0.16" />
+        <entry key="..\:/xht13127/AndroidStudioProjects/JavaFrontEnd/app/src/main/res/layout/activity_entity_detail.xml" value="0.103515625" />
         <entry key="..\:/xht13127/AndroidStudioProjects/JavaFrontEnd/app/src/main/res/layout/activity_history.xml" value="0.103515625" />
         <entry key="..\:/xht13127/AndroidStudioProjects/JavaFrontEnd/app/src/main/res/layout/activity_syllabus.xml" value="0.152" />
         <entry key="..\:/xht13127/AndroidStudioProjects/JavaFrontEnd/app/src/main/res/layout/entity_detail_content_list_item.xml" value="0.103515625" />
-        <entry key="..\:/xht13127/AndroidStudioProjects/JavaFrontEnd/app/src/main/res/layout/entity_detail_image_list_item.xml" value="0.1" />
         <entry key="..\:/xht13127/AndroidStudioProjects/JavaFrontEnd/app/src/main/res/layout/entity_detail_question_list_item.xml" value="0.103515625" />
-        <entry key="..\:/xht13127/AndroidStudioProjects/JavaFrontEnd/app/src/main/res/layout/favourite_list_item.xml" value="0.2" />
-        <entry key="..\:/xht13127/AndroidStudioProjects/JavaFrontEnd/app/src/main/res/layout/favourite_list_null_item.xml" value="0.101171875" />
         <entry key="..\:/xht13127/AndroidStudioProjects/JavaFrontEnd/app/src/main/res/layout/fragment_review.xml" value="0.264" />
         <entry key="..\:/xht13127/AndroidStudioProjects/JavaFrontEnd/app/src/main/res/layout/fragment_user_page.xml" value="0.103515625" />
         <entry key="..\:/xht13127/AndroidStudioProjects/JavaFrontEnd/app/src/main/res/layout/history_list_item.xml" value="0.103515625" />
         <entry key="..\:/xht13127/AndroidStudioProjects/JavaFrontEnd/app/src/main/res/layout/syllabus_dialog.xml" value="0.18803088803088802" />
         <entry key="..\:/xht13127/AndroidStudioProjects/JavaFrontEnd/app/src/main/res/layout/syllabus_list_item.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/activity_entity_detail.xml" value="0.32155797101449274" />
+        <entry key="app/src/main/res/layout/activity_favourite.xml" value="0.3795289855072464" />
+        <entry key="app/src/main/res/layout/activity_history.xml" value="0.3795289855072464" />
+        <entry key="app/src/main/res/layout/activity_login.xml" value="0.335" />
+        <entry key="app/src/main/res/layout/activity_quiz.xml" value="0.3795289855072464" />
+        <entry key="app/src/main/res/layout/favourite_list_item.xml" value="0.3795289855072464" />
+        <entry key="app/src/main/res/layout/fragment_ask_answer.xml" value="0.19047619047619047" />
+        <entry key="app/src/main/res/layout/fragment_entity_list.xml" value="0.2006079027355623" />
+        <entry key="app/src/main/res/layout/fragment_link_page.xml" value="0.19047619047619047" />
+        <entry key="app/src/main/res/layout/fragment_user_page.xml" value="0.335" />
+        <entry key="app/src/main/res/layout/history_list_item.xml" value="0.38269927536231885" />
+        <entry key="app/src/main/res/layout/listview_entity.xml" value="0.2006079027355623" />
+        <entry key="app/src/main/res/layout/listview_entity2.xml" value="0.32155797101449274" />
+        <entry key="app/src/main/res/layout/listview_search_result.xml" value="0.2006079027355623" />
+        <entry key="app/src/main/res/layout/quiz_question_list_item.xml" value="0.3795289855072464" />
+        <entry key="app/src/main/res/layout/recyclerview_subject.xml" value="0.2006079027355623" />
       </map>
     </option>
   </component>

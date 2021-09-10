@@ -88,7 +88,9 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:inputType="text"/>
+            android:inputType="text"
+            android:layout_marginStart="12dp"
+            android:layout_marginEnd="4dp"/>
 
         <Button
             android:id="@+id/btn_AskAns"
@@ -97,7 +99,8 @@
             android:background="@drawable/bg_btn_login"
             android:textColor="@color/white"
             android:text="发送"
-            android:textSize="20sp"/>
+            android:textSize="20sp"
+            android:layout_marginEnd="5dp"/>
     </LinearLayout>
 
 </RelativeLayout>
