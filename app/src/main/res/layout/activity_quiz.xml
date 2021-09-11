@@ -6,7 +6,9 @@
     android:layout_height="match_parent"
     android:gravity="center|center_horizontal"
     android:orientation="vertical"
-    tools:context=".QuizActivity">
+    tools:context=".QuizActivity"
+    android:layout_marginStart="10dp"
+    android:layout_marginEnd="10dp">
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/vp_quiz_question_list"

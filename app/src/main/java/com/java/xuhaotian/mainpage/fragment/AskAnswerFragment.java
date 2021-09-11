@@ -40,6 +40,7 @@ import com.java.xuhaotian.AskAnswerMsg;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import okhttp3.OkHttpClient;

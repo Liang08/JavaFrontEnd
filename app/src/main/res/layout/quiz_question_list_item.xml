@@ -22,17 +22,20 @@
             android:gravity="center"
             android:singleLine="false"
             android:text="第 1 题，共 1 题"
-            android:textSize="30sp" />
+            android:textSize="31sp"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="10dp"/>
 
         <TextView
             android:id="@+id/tv_quiz_question_list_item_body"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:gravity="center"
+            android:gravity="left"
             android:singleLine="false"
             android:text="题面"
-            android:textSize="30sp" />
+            android:textColor="@color/black"
+            android:textSize="27sp" />
 
         <RadioGroup
             android:id="@+id/rdoGroup_quiz_question_list_item"
@@ -45,7 +48,13 @@
                 android:layout_height="wrap_content"
                 android:singleLine="false"
                 android:text="选项A"
-                android:textSize="24sp" />
+                android:textSize="22sp"
+                android:layout_margin="3dp"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/grey"/>
 
             <RadioButton
                 android:id="@+id/rdoBtn_quiz_question_list_item_b"
@@ -53,7 +62,13 @@
                 android:layout_height="wrap_content"
                 android:singleLine="false"
                 android:text="选项B"
-                android:textSize="24sp" />
+                android:textSize="22sp"
+                android:layout_margin="3dp"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/grey"/>
 
             <RadioButton
                 android:id="@+id/rdoBtn_quiz_question_list_item_c"
@@ -61,7 +76,13 @@
                 android:layout_height="wrap_content"
                 android:singleLine="false"
                 android:text="选项C"
-                android:textSize="24sp" />
+                android:textSize="22sp"
+                android:layout_margin="3dp"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/grey"/>
 
             <RadioButton
                 android:id="@+id/rdoBtn_quiz_question_list_item_d"
@@ -69,7 +90,8 @@
                 android:layout_height="wrap_content"
                 android:singleLine="false"
                 android:text="选项D"
-                android:textSize="24sp" />
+                android:textSize="22sp"
+                android:layout_margin="3dp"/>
 
         </RadioGroup>
 
