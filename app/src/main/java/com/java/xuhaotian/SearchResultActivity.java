@@ -45,7 +45,7 @@ public class SearchResultActivity extends AppCompatActivity {
 
     private ImageButton mIbReturn;
     private TextView mTvTitle;
-    private String error_message;
+    private String error_message = null;
     private String searchKey;
     private SearchListAdapter mAdapter;
     private Button mBtnSort01, mBtnSort02;
@@ -330,9 +330,6 @@ public class SearchResultActivity extends AppCompatActivity {
                 Log.d("test", "fail");
                 error_message = "请求失败";
                 e.printStackTrace();
-            }
-            if (error_message != null){
-                Toast.makeText(this, "搜索错误", Toast.LENGTH_SHORT).show();
             }
         }
         Log.d("test", "token:" + Consts.getToken());
