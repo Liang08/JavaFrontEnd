@@ -79,6 +79,7 @@ public class AskAnswerFragment extends Fragment {
                     public void onClick(@NonNull View widget) {
                         Bundle bundle = new Bundle();
                         bundle.putString("context", ask);
+                        bundle.putString("course", getSubjectName(subjectString));
                         Intent intent = new Intent(getActivity(), LinkSearchActivity.class);
                         intent.putExtras(bundle);
                         startActivityForResult(intent, 0);
@@ -264,7 +265,6 @@ public class AskAnswerFragment extends Fragment {
                                     Log.d("test", "--sending success---");
                                     JSONArray ansJSON = new JSONArray(response.body().string());
                                     ans0 = ansJSON.getJSONObject(0).getString("value");
-                                    //if (ans0.equals("") ){ans0 = ansJSON.getJSONObject(0).getString("message");}
                                 } else {
                                     ans0 = "";
                                     Log.d("test", "--sending fail:" + response.code() + "---");

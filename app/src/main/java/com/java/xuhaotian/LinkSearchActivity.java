@@ -40,13 +40,22 @@ public class LinkSearchActivity extends AppCompatActivity {
         });
         Intent intent = getIntent();
         String context = intent.getStringExtra("context");
+        String originalCourse = intent.getStringExtra("course");
         try {
             JSONObject json = new JSONObject();
             json.put("token", Consts.getToken());
+            json.put("course", originalCourse);
             json.put("context", context);
             HttpRequest.MyResponse response = new HttpRequest().postRequest(Consts.backendURL + "linkInstance", json);
             if (response.code() == 200) {
                 JSONArray jsonArray = new JSONArray(response.string());
+                if(jsonArray.length() == 0){
+                    HashMap<String, String> map = new HashMap<>();
+                    map.put("name", "此学科内没有找到相关结果");
+                    map.put("course", originalCourse);
+                    map.put("entityType", "");
+                    searchResult.add(map);
+                }
                 for (int i = 0; i < jsonArray.length(); i++) {
                     JSONObject obj = jsonArray.getJSONObject(i);
                     String entityType = obj.getString("entity_type");
