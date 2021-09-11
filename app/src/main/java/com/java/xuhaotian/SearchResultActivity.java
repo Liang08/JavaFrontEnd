@@ -7,6 +7,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.util.Pair;
 import android.view.View;
@@ -41,6 +43,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
+
 public class SearchResultActivity extends AppCompatActivity {
 
     private ImageButton mIbReturn;
@@ -55,6 +61,7 @@ public class SearchResultActivity extends AppCompatActivity {
     private String[] label;
     private String searchLabel;
     private ArrayList<String> labelArray;
+    private Call historyCall = null;
     ArrayList<HashMap<String, String>> searchResult;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,6 +75,12 @@ public class SearchResultActivity extends AppCompatActivity {
         getData();
         initView(searchKey);
         initEvent();
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (historyCall != null) historyCall.cancel();
+        super.onDestroy();
     }
 
     void initView(String keyword) {
@@ -274,22 +287,9 @@ public class SearchResultActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
             }
+            postHistory();
             Log.d("test", "read cache");
             Log.d("test", property[0].toString());
-            try {
-                HashMap<String, Object> params = new HashMap<>();
-                params.put("token", Consts.getToken());
-                params.put("course", Consts.getSubjectName(course));
-                params.put("searchKey", searchKey);
-                params.put("limit", 100000);
-                if (!searchLabel.equals("全部")){
-                    params.put("label", searchLabel);
-                }
-                HttpRequest.MyResponse response = new HttpRequest().getRequest(Consts.backendURL + "getInstanceList", params);
-            }catch (Exception e) {
-                Log.d("test", "fail");
-                e.printStackTrace();
-            }
         }
         else {
             try {
@@ -347,5 +347,31 @@ public class SearchResultActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         initList();
+    }
+
+    private void postHistory() {
+        JSONObject params = new JSONObject();
+        try {
+            params.put("course", Consts.getSubjectName(course));
+            params.put("searchKey", searchKey);
+            params.put("token", Consts.getToken());
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+        if (historyCall != null) historyCall.cancel();
+        historyCall = new HttpRequest().postRequestCall(Consts.backendURL + "addSearchHistory", params);
+        historyCall.enqueue(new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                new Handler(Looper.getMainLooper()).post(() -> Toast.makeText(SearchResultActivity.this, "上传搜索记录失败1", Toast.LENGTH_SHORT).show());
+            }
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) {
+                if (!response.isSuccessful()) {
+                    Log.d("test", response.toString());
+                    new Handler(Looper.getMainLooper()).post(() -> Toast.makeText(SearchResultActivity.this, "上传搜索记录失败2", Toast.LENGTH_SHORT).show());
+                }
+            }
+        });
     }
 }

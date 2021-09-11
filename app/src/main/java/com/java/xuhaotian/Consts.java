@@ -12,7 +12,7 @@ import okhttp3.MediaType;
 
 public class Consts {
 
-    public static final String backendURL = "http://183.173.241.159:8080/";
+    public static final String backendURL = "http://183.172.51.12:8080/";
 
     public static final MediaType JSON = MediaType.get("application/json; charset=utf-8");
     private static String token;
