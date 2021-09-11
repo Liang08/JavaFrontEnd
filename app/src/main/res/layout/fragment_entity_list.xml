@@ -53,6 +53,26 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="@color/grey"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="5dp">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="当前科目："
+            android:textSize="24sp"
+            android:textColor="@color/black"/>
+        <TextView
+            android:id="@+id/tv_subject"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="24sp"
+            android:gravity="center"
+            android:text="语文"/>
+    </LinearLayout>
 
     <ListView
         android:id="@+id/lv_entity"

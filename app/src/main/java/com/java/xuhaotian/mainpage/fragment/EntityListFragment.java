@@ -1,17 +1,13 @@
 package com.java.xuhaotian.mainpage.fragment;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
-import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -36,18 +32,14 @@ import org.json.JSONObject;
 
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.Map;
 
 public class EntityListFragment extends Fragment {
-    private String[] mTitles;
     private TextView mTvSearch;
+    private TextView mTvSubject;
     private ListView mLvEntity;
     private RecyclerView mRvSubject;
     private Button mBtnSetting;
-    private String subject;
     private String error_message;
     private ArrayList<HashMap<String, String>> stringList;
 
@@ -66,6 +58,8 @@ public class EntityListFragment extends Fragment {
         mLvEntity = view.findViewById(R.id.lv_entity);
         mRvSubject = view.findViewById(R.id.rv_subject);
         mBtnSetting = view.findViewById(R.id.btn_set);
+        mTvSubject = view.findViewById(R.id.tv_subject);
+        mTvSubject.setText(Consts.getSubjectNow());
         setData();
         setListView(stringList);
         setSubjectList();
@@ -103,7 +97,11 @@ public class EntityListFragment extends Fragment {
             }
         } catch (Exception e) {
             Log.d("test", "fail");
+            error_message = "请求失败";
             e.printStackTrace();
+        }
+        if (error_message != null){
+            Toast.makeText(getContext(), "请求失败", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -117,6 +115,7 @@ public class EntityListFragment extends Fragment {
             @Override
             public void onItemClick(View view, int position) {
                 Consts.setSubjectNow(Consts.getSubjectList().get(position));
+                mTvSubject.setText(Consts.getSubjectNow());
                 setData();
                 setListView(stringList);
             }

@@ -77,7 +77,7 @@ public class SearchActivity extends AppCompatActivity {
                 try {
                     JSONObject json = new JSONObject();
                     json.put("token", Consts.getToken());
-                    HttpRequest.MyResponse response = new HttpRequest().postRequest(Consts.backendURL + "clearSearchHistory", json);
+                    HttpRequest.MyResponse response = new HttpRequest().putRequest(Consts.backendURL + "clearSearchHistory", json);
                     if (response.code() == 200) {
                         Log.d("test", "success");
                     } else if (response.code() == 401) {

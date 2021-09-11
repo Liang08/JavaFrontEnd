@@ -276,6 +276,20 @@ public class SearchResultActivity extends AppCompatActivity {
             }
             Log.d("test", "read cache");
             Log.d("test", property[0].toString());
+            try {
+                HashMap<String, Object> params = new HashMap<>();
+                params.put("token", Consts.getToken());
+                params.put("course", Consts.getSubjectName(course));
+                params.put("searchKey", searchKey);
+                params.put("limit", 100000);
+                if (!searchLabel.equals("全部")){
+                    params.put("label", searchLabel);
+                }
+                HttpRequest.MyResponse response = new HttpRequest().getRequest(Consts.backendURL + "getInstanceList", params);
+            }catch (Exception e) {
+                Log.d("test", "fail");
+                e.printStackTrace();
+            }
         }
         else {
             try {
@@ -314,7 +328,11 @@ public class SearchResultActivity extends AppCompatActivity {
                 }
             } catch (Exception e) {
                 Log.d("test", "fail");
+                error_message = "请求失败";
                 e.printStackTrace();
+            }
+            if (error_message != null){
+                Toast.makeText(this, "搜索错误", Toast.LENGTH_SHORT).show();
             }
         }
         Log.d("test", "token:" + Consts.getToken());

@@ -9,9 +9,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -45,9 +47,12 @@ public class LinkPageFragment extends Fragment {
     private TextView mTvTitle;
     private EditText mEtLink;
     private Button mBtnSearch;
+    private Spinner mSpSubject;
     private String error_message;
+    private String subjectSelected;
     private ListView mLvResult;
     private LinkAdapter mAdapter;
+    private String[] starArray = {"语文", "数学", "英语", "物理", "化学", "生物", "政治", "地理", "历史"};
     ArrayList<HashMap<String, String>> searchResult = new ArrayList<>();
 
     @Nullable
@@ -108,9 +113,13 @@ public class LinkPageFragment extends Fragment {
                 } catch (Exception e) {
                     Log.d("test", "fail");
                     e.printStackTrace();
+                    error_message = "请求失败";
                 }
                 mAdapter = new LinkAdapter(getActivity(), searchResult);
                 mLvResult.setAdapter(mAdapter);
+                if (error_message != null){
+                    Toast.makeText(getContext(), "获取知识链接失败", Toast.LENGTH_SHORT).show();
+                }
             }
         });
         mLvResult.setOnItemClickListener(new AdapterView.OnItemClickListener() {

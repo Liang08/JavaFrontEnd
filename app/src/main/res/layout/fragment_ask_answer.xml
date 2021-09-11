@@ -7,10 +7,30 @@
     android:orientation="horizontal">
 
     <LinearLayout
+        android:id="@+id/ll_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_alignParentTop="true">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="知识问答"
+            android:textSize="30sp"
+            android:layout_margin="10dp"
+            android:gravity="center"
+            android:textColor="@color/black"/>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/grey"/>
+    </LinearLayout>
+
+    <LinearLayout
         android:id="@+id/ask_answer_top_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true">
+        android:layout_below="@+id/ll_title">
 
         <ImageView
             android:id="@+id/ask_answer_subject_icon"
