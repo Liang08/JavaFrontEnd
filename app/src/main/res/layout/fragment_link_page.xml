@@ -16,7 +16,6 @@
         android:layout_height="1dp"
         android:background="@color/grey"/>
 
-    <!--
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -32,7 +31,6 @@
             android:layout_height="wrap_content"/>
 
     </LinearLayout>
-    -->
 
     <EditText
         android:id="@+id/et_link"

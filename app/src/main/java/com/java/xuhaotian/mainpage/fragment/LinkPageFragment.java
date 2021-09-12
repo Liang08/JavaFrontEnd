@@ -70,11 +70,29 @@ public class LinkPageFragment extends Fragment {
         mBtnSearch = view.findViewById(R.id.btn_search);
         mEtLink = view.findViewById(R.id.et_link);
         mLvResult = view.findViewById(R.id.lv_list);
+        mSpSubject = view.findViewById(R.id.sp_subject);
+        ArrayAdapter<String> starAdapter = new ArrayAdapter<String>(getContext(),R.layout.item_select,starArray);
+        starAdapter.setDropDownViewResource(R.layout.item_dropdown);
+        mSpSubject.setAdapter(starAdapter);
+        mSpSubject.setSelection(0);
+        subjectSelected = starArray[0];
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
+        mSpSubject.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                subjectSelected = starArray[position];
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
 
         mBtnSearch.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -85,6 +103,7 @@ public class LinkPageFragment extends Fragment {
                     JSONObject json = new JSONObject();
                     json.put("token", Consts.getToken());
                     json.put("context", context);
+                    json.put("course", Consts.getSubjectName(subjectSelected));
                     HttpRequest.MyResponse response = new HttpRequest().postRequest(Consts.backendURL + "linkInstance", json);
                     if (response.code() == 200) {
                         JSONArray jsonArray = new JSONArray(response.string());
